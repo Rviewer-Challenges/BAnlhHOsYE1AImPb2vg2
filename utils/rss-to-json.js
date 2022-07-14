@@ -4,7 +4,7 @@ import matchAll from 'string.prototype.matchall';
  * rss to json
  * @version 1.0.0
  * @author sgb004
- * @description The regex was taken from the answer of https://stackoverflow.com/a/41590567 https://stackoverflow.com/a/317081 https://stackoverflow.com/a/39243641 https://stackoverflow.com/a/1454936 and the json structure was inspired in https://rss2json.com
+ * @description Some regex were taken from answers of https://stackoverflow.com/a/41590567 https://stackoverflow.com/a/317081 https://stackoverflow.com/a/39243641 https://stackoverflow.com/a/1454936 and the json structure was inspired in https://rss2json.com
  */
 
 class RSStoJSON {
@@ -221,16 +221,3 @@ export const rsstojsonConvert = (data) => {
 };
 
 export default RSStoJSON;
-//export rsstojsonConvert;
-/*
-//fetch('https://www.promodescuentos.com/rss/todas')
-fetch('http://feeds.weblogssl.com/xatakamx')
-	//fetch('https://github.com/rails/rails/releases.atom')
-	//fetch('./data.xml')
-	.then((response) => response.text())
-	.then((data) => {
-		const rsstojson = new RSStoJSON();
-
-		console.log(rsstojson.convert(data));
-	});
-*/
