@@ -1,8 +1,16 @@
-import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 import ListItem from './components/list-item/list-item';
 import { rsstojsonConvert } from './utils/rss-to-json';
+import Constants from 'expo-constants';
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		backgroundColor: '#fff',
+		paddingTop: Constants.statusBarHeight,
+	},
+});
 
 export default function App() {
 	let [listItems, setListItems] = useState([]);
@@ -22,10 +30,3 @@ export default function App() {
 		</View>
 	);
 }
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: '#fff',
-	},
-});
