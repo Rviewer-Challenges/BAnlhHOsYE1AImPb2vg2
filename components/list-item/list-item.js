@@ -40,7 +40,7 @@ const ListItem = ({ title, thumbnail, pubDate }) => {
 		<View style={styles.container}>
 			<View style={styles.content}>
 				<View>
-					<Image style={styles.img} source={{ uri: thumbnail }} />
+					{thumbnail != '' && <Image style={styles.img} source={{ uri: thumbnail }} />}
 					<Text style={styles.date}>{pubDate}</Text>
 				</View>
 				<View style={styles.text}>
