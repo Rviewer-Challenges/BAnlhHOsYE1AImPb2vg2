@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
-import formatDate from '../../utils/format-date';
+import formatDate from '../../utils/custom-date';
 
 const styles = StyleSheet.create({
 	container: {
