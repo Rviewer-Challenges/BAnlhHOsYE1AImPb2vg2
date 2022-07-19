@@ -1,4 +1,6 @@
 import News from '../models/news';
+import Providers from '../models/providers';
+import { getTimeFromDate } from '../utils/custom-date';
 
 /**
  * @name NewsController
@@ -7,9 +9,11 @@ import News from '../models/news';
  */
 
 class NewsController {
+	#db;
 	#news;
 
 	constructor(db) {
+		this.#db = db;
 		this.#news = new News(db);
 	}
 
@@ -38,7 +42,42 @@ class NewsController {
 	}
 
 	getAll() {
-		return this.#news.get();
+		return new Promise((res, rej) => {
+			const providers = new Providers(this.#db);
+			let providersData = {};
+			let ns = [];
+
+			this.#news
+				.get()
+				.then((news) => {
+					let getProviders = [];
+					news.forEach((n) => {
+						if (!providers[n.providerId]) {
+							providers[n.providerId] = {};
+							getProviders.push(providers.getById(n.providerId));
+						}
+					});
+
+					ns = news;
+					return Promise.all(getProviders);
+				})
+				.then((data) => {
+					data.forEach((n) => {
+						providersData[n.id] = n;
+					});
+
+					ns.map((n) => {
+						n.provider = providersData[n.providerId];
+						delete n.providerId;
+						return n;
+					});
+					
+					ns.sort((a, b) => getTimeFromDate(b.pubDate) - getTimeFromDate(a.pubDate));
+
+					res(ns);
+				})
+				.catch((error) => rej(error));
+		});
 	}
 }
 
