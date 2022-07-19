@@ -5,8 +5,9 @@ import Constants from 'expo-constants';
 import DB_SQLite from './utils/db-sqlite';
 import downloaderRSS from './utils/downloader-rss';
 import { getTimeFromDate } from './utils/custom-date';
+import NewsController from './controllers/news-controller';
 
-const db = new DB_SQLite('data18.db');
+const db = new DB_SQLite('data19.db');
 
 const styles = StyleSheet.create({
 	container: {
@@ -22,12 +23,14 @@ export default function App() {
 
 		downloaderRSS(db)
 			.then((news) => {
-				news.sort((a, b) => getTimeFromDate(b.pubDate) - getTimeFromDate(a.pubDate));
+			  console.log('Obteniendo automaticamente')
+			  
 				setListItems(news);
-
+				
 				timerDownloadRSS = setTimeout(() => {
 					downloadRSS();
 				}, 60000);
+				
 			})
 			.catch((error) => console.log(error));
 	};
@@ -36,7 +39,16 @@ export default function App() {
 	let [listItems, setListItems] = useState([]);
 
 	useEffect(() => {
-		downloadRSS();
+	  const newsController = new NewsController(db);
+
+		newsController
+			.getAll()
+			.then((news) => {
+			  console.log('Obteniendo al inicio');
+			  setListItems(news);
+			  downloadRSS();
+			})
+			.catch((error) => console.log(error));
 	}, []);
 
 	return (
