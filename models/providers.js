@@ -42,6 +42,15 @@ class Providers {
 				.catch((error) => rej(error));
 		});
 	}
+
+	getById(id) {
+		return new Promise((res, rej) => {
+			this.#db
+				.select('SELECT * FROM providers WHERE id=?', [id])
+				.then((rows) => res(rows.length == 0 ? undefined : rows[0]))
+				.catch((error) => rej(error));
+		});
+	}
 }
 
 export default Providers;
