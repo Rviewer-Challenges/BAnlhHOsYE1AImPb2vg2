@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
 	},
 });
 
-const ListItem = ({ title, thumbnail, pubDate }) => {
+const ListItem = ({ title, thumbnail, pubDate, provider }) => {
 	pubDate = formatDate(pubDate);
 	return (
 		<View style={styles.container}>
@@ -45,7 +45,7 @@ const ListItem = ({ title, thumbnail, pubDate }) => {
 				</View>
 				<View style={styles.text}>
 					<Text style={styles.title}>{title}</Text>
-					<Text style={styles.footer}>Xataka México</Text>
+					<Text style={styles.footer}>{provider.title}</Text>
 				</View>
 			</View>
 		</View>
