@@ -85,6 +85,18 @@ class RSStoJSON {
 
 	removeTags = (s) => s.replace(/<[^>]*?>/gm, '');
 
+	removeCDATA = (s) => {
+		s = s.trim();
+		if (s.startsWith('<![CDATA[')) {
+			if (s.endsWith(']]>')) {
+				s = s.substring(0, s.length - 3);
+			}
+			s = s.substring(9, s.length);
+			s = s.trim();
+		}
+		return s;
+	};
+
 	/**
 	 *
 	 * METHODS TO BUILD JSON
@@ -119,8 +131,8 @@ class RSStoJSON {
 		const link = this.getLink(data);
 		const guid = this.getDataFromPatron(data, '(guid|id)', 2);
 		const author = this.getAuthor(data);
-		const description = this.unescapeHTML(this.getDataFromPatron(data, 'description'));
-		const content = this.unescapeHTML(this.getDataFromPatron(data, 'content'));
+		const description = this.getContent(data, 'description');
+		const content = this.getContent(data, '(content|content:encoded)', 2);
 		let thumbnail = this.getThumbnail(data);
 		if (thumbnail === '') {
 			thumbnail = this.getThumbnailFromImgTag(description + ' ' + content);
@@ -149,15 +161,10 @@ class RSStoJSON {
 		return info;
 	}
 
-	getTitle(data) {
-		let title = this.getDataFromPatron(data, 'title');
-		if (title.startsWith('<![CDATA[')) {
-			let t = matchAll(title, /<!\[CDATA\[(.*?)(?=\]\]>)/gm);
-			t = [...t];
-			title = t[0][1];
-		}
-		return title.trim();
-	}
+	getTitle = (data) => this.removeCDATA(this.getDataFromPatron(data, 'title'));
+
+	getContent = (data, tag, key = 1) =>
+		this.removeCDATA(this.unescapeHTML(this.getDataFromPatron(data, tag, key)));
 
 	getPubDate(data) {
 		let pubDate = this.getDataFromPatron(data, '(pubDate|updated)', 2);
