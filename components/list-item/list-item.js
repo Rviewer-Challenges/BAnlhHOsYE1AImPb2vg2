@@ -1,6 +1,9 @@
 import { useRef, useState } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, Animated, PanResponder } from 'react-native';
 import formatDate from '../../utils/custom-date';
+import BookmarkIcon from '../../assets/icon-bookmark.svg';
+import ReadIcon from '../../assets/icon-read.svg';
+import UnReadIcon from '../../assets/icon-unread.svg';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -63,13 +66,12 @@ const styles = StyleSheet.create({
 		width: '50%',
 		height: '100%',
 		justifyContent: 'center',
-		alignItems: 'center',
 		opacity: 0,
 	},
 	bookmark: {
-		backgroundColor: '#ffca3a',
+		backgroundColor: '#ffcb77',
 	},
-	swipeLeft: { backgroundColor: '#1982c4' },
+	swipeLeft: { backgroundColor: '#17c3b2' },
 });
 
 const ListItem = ({ title, thumbnail, pubDate, provider }) => {
@@ -128,17 +130,31 @@ const ListItem = ({ title, thumbnail, pubDate, provider }) => {
 	return (
 		<View style={{ backgroundColor: backgroundColor }}>
 			<View style={styles.icons}>
-				<View style={[styles.icon, { opacity: swipeDirection === 'right' ? 100 : 0 }]}>
-					<Text>Fav</Text>
+				<View
+					style={[
+						styles.icon,
+						{ opacity: swipeDirection === 'right' ? 100 : 0 },
+						{ paddingLeft: 30, alignItems: 'flex-start' },
+					]}
+				>
+					<BookmarkIcon />
 				</View>
-				<View style={[styles.icon, { opacity: swipeDirection === 'left' ? 100 : 0 }]}>
-					<Text>Lei</Text>
+				<View
+					style={[
+						styles.icon,
+						{ opacity: swipeDirection === 'left' ? 100 : 0 },
+						{ paddingRight: 30, alignItems: 'flex-end' },
+					]}
+				>
+					{status.isRead ? <ReadIcon /> : <UnReadIcon />}
 				</View>
 			</View>
 			<Animated.View
 				style={{
 					transform: [{ translateX: pan.x }, { translateY: 0 }],
-					backgroundColor: status.isBookmark ? styles.bookmark.backgroundColor : '#fff',
+					backgroundColor: status.isBookmark
+						? styles.bookmark.backgroundColor
+						: '#EBEBEB',
 				}}
 				{...panResponder.panHandlers}
 				onTouchStart={() => restorePosition()}
