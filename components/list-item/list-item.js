@@ -74,9 +74,7 @@ const styles = StyleSheet.create({
 	swipeLeft: { backgroundColor: '#17c3b2' },
 });
 
-const ListItem = ({ id, title, thumbnail, pubDate, provider, bookmark, newsController }) => {
-	console.log({ id, bookmark });
-
+const ListItem = ({ id, title, thumbnail, pubDate, provider, bookmark, read, newsController }) => {
 	const pan = useRef(new Animated.ValueXY()).current;
 
 	const panResponder = useRef(
@@ -106,24 +104,18 @@ const ListItem = ({ id, title, thumbnail, pubDate, provider, bookmark, newsContr
 		const position = getPosition();
 
 		if (position > 25) {
-			console.log('AGREGANDO A FAVORITOS');
 			status.isBookmark = !status.isBookmark;
-			newsController
-				.updateBookmark(id, status.isBookmark)
-				.then((result) => {
-					console.log(result);
-				})
-				.catch((error) => console.log(error));
+			newsController.updateBookmark(id, status.isBookmark);
 		} else if (position < -25) {
-			console.log('MARCAR COMO LEIDO');
 			status.isRead = !status.isRead;
+			newsController.updateRead(id, status.isRead);
 		}
 
 		setStatus({ isBookmark: status.isBookmark, isRead: status.isRead });
 	};
 
 	let [swipeDirection, setSwipeDirection] = useState('');
-	let [status, setStatus] = useState({ isBookmark: bookmark, isRead: false });
+	let [status, setStatus] = useState({ isBookmark: bookmark, isRead: read });
 
 	let backgroundColor = 'transparent';
 	if (swipeDirection === 'right') {
