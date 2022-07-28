@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
 });
 
 export default function App() {
+	const newsController = new NewsController(db);
 	const downloadRSS = () => {
 		clearTimeout(timerDownloadRSS);
 
@@ -43,8 +44,6 @@ export default function App() {
 	let list = useRef(null);
 
 	useEffect(() => {
-		const newsController = new NewsController(db);
-
 		newsController
 			.getAll()
 			.then((news) => {
@@ -60,7 +59,7 @@ export default function App() {
 			<FlatList
 				ref={list}
 				data={listItems}
-				renderItem={({ item }) => <ListItem {...item} />}
+				renderItem={({ item }) => <ListItem {...item} newsController={newsController} />}
 				onTouchStart={(evt) => {
 					x = evt.nativeEvent.pageX;
 					y = evt.nativeEvent.pageY;
