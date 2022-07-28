@@ -62,6 +62,15 @@ class News {
 				.catch((error) => rej(error));
 		});
 	}
+
+	setBookmark(id, bookmark) {
+		return new Promise((res, rej) => {
+			this.#db
+				.execute('UPDATE news SET bookmark = ? WHERE id = ?', [bookmark, id])
+				.then((result) => res(result))
+				.catch((error) => rej(error));
+		});
+	}
 }
 
 export default News;

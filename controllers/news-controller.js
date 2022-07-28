@@ -71,13 +71,18 @@ class NewsController {
 						delete n.providerId;
 						return n;
 					});
-					
+
 					ns.sort((a, b) => getTimeFromDate(b.pubDate) - getTimeFromDate(a.pubDate));
 
 					res(ns);
 				})
 				.catch((error) => rej(error));
 		});
+	}
+
+	updateBookmark(id, status) {
+		console.log(id, status);
+		return this.#news.setBookmark(id, status);
 	}
 }
 
