@@ -81,8 +81,11 @@ class NewsController {
 	}
 
 	updateBookmark(id, status) {
-		console.log(id, status);
 		return this.#news.setBookmark(id, status);
+	}
+
+	updateRead(id, status) {
+		return this.#news.setRead(id, status);
 	}
 }
 

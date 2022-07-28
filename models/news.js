@@ -63,10 +63,19 @@ class News {
 		});
 	}
 
-	setBookmark(id, bookmark) {
+	setBookmark(id, status) {
 		return new Promise((res, rej) => {
 			this.#db
-				.execute('UPDATE news SET bookmark = ? WHERE id = ?', [bookmark, id])
+				.execute('UPDATE news SET bookmark = ? WHERE id = ?', [status, id])
+				.then((result) => res(result))
+				.catch((error) => rej(error));
+		});
+	}
+
+	setRead(id, status) {
+		return new Promise((res, rej) => {
+			this.#db
+				.execute('UPDATE news SET read = ? WHERE id = ?', [status, id])
 				.then((result) => res(result))
 				.catch((error) => rej(error));
 		});
