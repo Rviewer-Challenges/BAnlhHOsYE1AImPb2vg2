@@ -54,6 +54,15 @@ class News {
 		});
 	}
 
+	getBookmarks() {
+		return new Promise((res, rej) => {
+			this.#db
+				.select('SELECT * FROM news WHERE bookmark=1')
+				.then((rows) => res(rows))
+				.catch((error) => rej(error));
+		});
+	}
+
 	findByGuid(guid) {
 		return new Promise((res, rej) => {
 			this.#db
