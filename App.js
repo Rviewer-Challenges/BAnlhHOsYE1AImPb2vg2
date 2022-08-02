@@ -1,13 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
-import { FlatList, StyleSheet, View, PanResponder } from 'react-native';
+import { FlatList, StyleSheet, View, Text } from 'react-native';
 import ListItem from './components/list-item/list-item';
 import Constants from 'expo-constants';
 import DB_SQLite from './utils/db-sqlite';
-import downloaderRSS from './utils/downloader-rss';
-import { getTimeFromDate } from './utils/custom-date';
-import NewsController from './controllers/news-controller';
+import NavigationBar from './components/navigation-bar/navigation-bar';
+import NewsItems from './utils/news-items';
 
 const db = new DB_SQLite('data22.db');
+const newsItems = new NewsItems(db);
 
 const styles = StyleSheet.create({
 	container: {
@@ -18,39 +18,17 @@ const styles = StyleSheet.create({
 });
 
 export default function App() {
-	const newsController = new NewsController(db);
-	const downloadRSS = () => {
-		clearTimeout(timerDownloadRSS);
-
-		downloaderRSS(db)
-			.then((news) => {
-				console.log('Obteniendo automaticamente');
-
-				setListItems(news);
-
-				timerDownloadRSS = setTimeout(() => {
-					downloadRSS();
-				}, 60000);
-			})
-			.catch((error) => console.log(error));
-	};
-
 	let y = 0;
 	let x = 0;
 	let isScrolling = false;
-	let timerDownloadRSS;
 
 	let [listItems, setListItems] = useState([]);
 	let list = useRef(null);
 
 	useEffect(() => {
-		newsController
-			.getAll()
-			.then((news) => {
-				console.log('Obteniendo al inicio');
-				setListItems(news);
-				//downloadRSS();
-			})
+		newsItems
+			.getAllItems()
+			.then((news) => setListItems(news))
 			.catch((error) => console.log(error));
 	}, []);
 
@@ -59,7 +37,7 @@ export default function App() {
 			<FlatList
 				ref={list}
 				data={listItems}
-				renderItem={({ item }) => <ListItem {...item} newsController={newsController} />}
+				renderItem={({ item }) => <ListItem {...item} newsItems={newsItems} />}
 				onTouchStart={(evt) => {
 					x = evt.nativeEvent.pageX;
 					y = evt.nativeEvent.pageY;
@@ -89,6 +67,14 @@ export default function App() {
 				}}
 				onScrollEndDrag={() => {
 					isScrolling = false;
+				}}
+			/>
+			<NavigationBar
+				homeBtnFn={() => {
+					setListItems(newsItems.getAll());
+				}}
+				bookmarkBtnFn={() => {
+					setListItems(newsItems.getBookmarks());
 				}}
 			/>
 		</View>

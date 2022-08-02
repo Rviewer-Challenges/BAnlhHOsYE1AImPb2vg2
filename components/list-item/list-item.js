@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
 	swipeLeft: { backgroundColor: '#17c3b2' },
 });
 
-const ListItem = ({ id, title, thumbnail, pubDate, provider, bookmark, read, newsController }) => {
+const ListItem = ({ id, title, thumbnail, pubDate, provider, bookmark, read, newsItems }) => {
 	const pan = useRef(new Animated.ValueXY()).current;
 
 	const panResponder = useRef(
@@ -105,10 +105,10 @@ const ListItem = ({ id, title, thumbnail, pubDate, provider, bookmark, read, new
 
 		if (position > 25) {
 			status.isBookmark = !status.isBookmark;
-			newsController.updateBookmark(id, status.isBookmark);
+			newsItems.updateBookmark(id, status.isBookmark);
 		} else if (position < -25) {
 			status.isRead = !status.isRead;
-			newsController.updateRead(id, status.isRead);
+			newsItems.updateRead(id, status.isRead);
 		}
 
 		setStatus({ isBookmark: status.isBookmark, isRead: status.isRead });
