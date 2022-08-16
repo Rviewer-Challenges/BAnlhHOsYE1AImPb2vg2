@@ -24,19 +24,37 @@ const NavigationBarBtn = ({
 }) => {
 	const AnimatedSvg = Animated.createAnimatedComponent(Svg);
 	const colorAnim = useRef(new Animated.Value(0)).current;
+	const transformScaleAnim = useRef(new Animated.Value(0)).current;
 
-	const changeColor = (to, duration = 250) => {
+	const changeColor = (to) => {
+		console.log({ index, to });
 		Animated.timing(colorAnim, {
 			toValue: to,
-			duration,
+			duration: 250,
 			useNativeDriver: false,
 		}).start();
 	};
+
+	const pressAnimStart = (duration = 0) => {
+		let animatedTiming = Animated.timing(transformScaleAnim, {
+			toValue: 2,
+			duration: 500,
+			useNativeDriver: false,
+		});
+		animatedTiming.reset();
+		animatedTiming.start();
+	};
+
+	const isActivated = activated == index;
 
 	let thisBtn = useRef(null);
 	let color = colorAnim.interpolate({
 		inputRange: [0, 1, 2],
 		outputRange: [colors.disabled, colors.deactivated, colors.activated],
+	});
+	let transformScale = transformScaleAnim.interpolate({
+		inputRange: [0, 1, 2],
+		outputRange: [1, 0.5, 1],
 	});
 
 	if (!enabled) {
@@ -44,7 +62,7 @@ const NavigationBarBtn = ({
 	}
 
 	if (enabled) {
-		activated == index ? changeColor(2) : changeColor(1);
+		isActivated ? changeColor(2) : changeColor(1);
 	}
 
 	return (
@@ -54,7 +72,9 @@ const NavigationBarBtn = ({
 				thisBtn.current.measureInWindow((left) => {
 					onPress(event, left);
 				});
-				changeColor(1);
+				if (!isActivated) {
+					pressAnimStart();
+				}
 			}}
 		>
 			<View
@@ -67,7 +87,7 @@ const NavigationBarBtn = ({
 						color: color,
 						marginRight: 'auto',
 						marginLeft: 'auto',
-						//transform: [{ scale: 0.75 }],
+						transform: [{ scale: transformScale }],
 					}}
 					width="25"
 					height="25"
