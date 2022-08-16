@@ -33,10 +33,10 @@ const NavigationBar = ({ homeBtnFn, bookmarkBtnFn, activeBack = false, activeRef
 	const bottomBarLeftAnim = useRef(new Animated.Value(-100)).current;
 	const bottomBarColorAnim = useRef(new Animated.Value(0)).current;
 
-	const moveBottomBar = (to, duration = 250) => {
+	const moveBottomBar = (to) => {
 		Animated.timing(bottomBarLeftAnim, {
 			toValue: to,
-			duration,
+			duration: 250,
 			easing: Easing.linear,
 			useNativeDriver: false,
 		}).start();
