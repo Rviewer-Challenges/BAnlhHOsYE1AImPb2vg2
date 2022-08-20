@@ -2,6 +2,7 @@ import { View, StyleSheet, Animated, Easing } from 'react-native';
 import { useRef, useState } from 'react';
 import { Path } from 'react-native-svg';
 import NavigationBarBtn from './navigation-bar-btn';
+import { useNavigation } from '@react-navigation/native';
 
 const styles = StyleSheet.create({
 	content: {
@@ -25,11 +26,13 @@ const styles = StyleSheet.create({
 		activated: 'rgba(3, 7, 30, 1)',
 		home: 'rgb(0, 53, 102)',
 		bookmarks: 'rgb(255, 214, 10)',
-		config: 'rgb(88, 129, 87)',
+		settings: 'rgb(88, 129, 87)',
 	},
 });
 
-const NavigationBar = ({ homeBtnFn, bookmarkBtnFn, activeBack = false, activeRefresh = false }) => {
+const NavigationBar = ({ activeBack = false, activeRefresh = false }) => {
+	const navigation = useNavigation();
+
 	const bottomBarLeftAnim = useRef(new Animated.Value(-100)).current;
 	const bottomBarColorAnim = useRef(new Animated.Value(0)).current;
 
@@ -56,7 +59,7 @@ const NavigationBar = ({ homeBtnFn, bookmarkBtnFn, activeBack = false, activeRef
 		outputRange: [
 			styles.buttonColors.home,
 			styles.buttonColors.bookmarks,
-			styles.buttonColors.config,
+			styles.buttonColors.settings,
 		],
 	});
 
@@ -85,6 +88,7 @@ const NavigationBar = ({ homeBtnFn, bookmarkBtnFn, activeBack = false, activeRef
 					setActivated(1);
 					moveBottomBar(left);
 					changeBottomBar(0);
+					navigation.navigate('Home');
 				}}
 				activated={activated}
 				colors={{
@@ -104,6 +108,7 @@ const NavigationBar = ({ homeBtnFn, bookmarkBtnFn, activeBack = false, activeRef
 					setActivated(2);
 					moveBottomBar(left);
 					changeBottomBar(1);
+					navigation.navigate('Bookmarks');
 				}}
 				activated={activated}
 				colors={{
@@ -127,11 +132,12 @@ const NavigationBar = ({ homeBtnFn, bookmarkBtnFn, activeBack = false, activeRef
 					setActivated(3);
 					moveBottomBar(left);
 					changeBottomBar(2);
+					navigation.navigate('Settings');
 				}}
 				activated={activated}
 				colors={{
 					...styles.buttonColors,
-					activated: styles.buttonColors.config,
+					activated: styles.buttonColors.settings,
 				}}
 			>
 				<Path
