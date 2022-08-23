@@ -5,6 +5,10 @@ import NavigationBar from './components/navigation-bar/navigation-bar';
 import HomeScreen from './components/home-screen/home-screen';
 import BookmarksScreen from './components/bookmarks-screen/bookmarks-screen';
 import SettingsScreen from './components/settings-screen/settings-screen';
+import { Text, View } from 'react-native';
+import DB_SQLite from './utils/db-sqlite';
+import NewsItems from './utils/news-items';
+import NewsData from './utils/news-data';
 
 const horizontalAnimation = {
 	cardStyleInterpolator: ({ current, layouts }) => {
@@ -25,8 +29,22 @@ const horizontalAnimation = {
 
 const Stack = createStackNavigator();
 
+const db = new DB_SQLite('data22.db');
+const newsItems = new NewsItems(db);
+
+NewsData.newsItems = newsItems;
+
 export default function App() {
-	return (
+	let [newsWasLoaded, setNewsWasLoaded] = useState(false);
+
+	useEffect(() => {
+		newsItems
+			.getAllItems()
+			.then((news) => setNewsWasLoaded(true))
+			.catch((error) => console.log(error));
+	}, []);
+
+	return newsWasLoaded ? (
 		<NavigationContainer>
 			<Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
 				<Stack.Screen name="Home" component={HomeScreen} />
@@ -43,5 +61,9 @@ export default function App() {
 			</Stack.Navigator>
 			<NavigationBar />
 		</NavigationContainer>
+	) : (
+		<View>
+			<Text>Cargando...</Text>
+		</View>
 	);
 }
