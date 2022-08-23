@@ -1,39 +1,23 @@
-import { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet } from 'react-native';
-import Constants from 'expo-constants';
-import DB_SQLite from '../../utils/db-sqlite';
-import NewsItems from '../../utils/news-items';
-import FlatListSwipe from '../flatlist-swipe/flatlist-swipe';
 import ListItem from '../list-item/list-item';
-
-const db = new DB_SQLite('data22.db');
-const newsItems = new NewsItems(db);
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: '#fff',
-		paddingTop: Constants.statusBarHeight,
-	},
-});
+import CustomFlatListSwipe from '../custom-flatlist-swipe/custom-flatlist-swipe';
+import NewsData from '../../utils/news-data';
+import { useEffect, useState } from 'react';
 
 const HomeScreen = ({ navigation }) => {
-	let [listItems, setListItems] = useState([]);
-
+	let [news, setNews] = useState(NewsData.getAll());
 	useEffect(() => {
-		newsItems
-			.getAllItems()
-			.then((news) => setListItems(news))
-			.catch((error) => console.log(error));
-	}, []);
+		const willFocus = navigation.addListener('focus', () => {
+			setNews(NewsData.getAll());
+		});
+		return willFocus;
+	}, [navigation]);
 
 	return (
-		<View style={styles.container}>
-			<FlatListSwipe
-				data={listItems}
-				renderItem={({ item }) => <ListItem {...item} newsItems={newsItems} />}
-			/>
-		</View>
+		<CustomFlatListSwipe
+			data={news}
+			renderItem={({ item }) => <ListItem {...item} />}
+			keyExtractor={(item) => item.id}
+		/>
 	);
 };
 
