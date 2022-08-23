@@ -1,11 +1,11 @@
 import NewsController from '../controllers/news-controller';
 import downloaderRSS from './downloader-rss';
+import NewsData from './news-data';
 
 class NewsItems {
 	#db;
 	#newsController;
 	#timerDownloadRSS;
-	#items = [];
 
 	constructor(db) {
 		this.#db = db;
@@ -19,7 +19,7 @@ class NewsItems {
 			.then((news) => {
 				console.log('Obteniendo automaticamente');
 
-				this.#items = news;
+				NewsData.items = news;
 
 				this.#timerDownloadRSS = setTimeout(() => {
 					this.downloadRSS();
@@ -33,32 +33,20 @@ class NewsItems {
 			this.#newsController
 				.getAll()
 				.then((news) => {
-					this.#items = news;
+					NewsData.items = news;
 					res(news);
 				})
 				.catch((error) => rej(error));
 		});
 	}
 
-	getAll() {
-		return this.#items;
-	}
-
-	getBookmarks() {
-		return this.#items.filter((item) => item.bookmark == 1);
-	}
-
 	updateBookmark(id, status) {
-		this.#items = this.#items.map((item) => {
-			if (item.id == id) {
-				item.bookmark = status;
-			}
-			return item;
-		});
+		NewsData.updateBookmark(id, status);
 		this.#newsController.updateBookmark(id, status);
 	}
 
 	updateRead(id, isRead) {
+		NewsData.updateRead(id, isRead);
 		this.#newsController.updateRead(id, isRead);
 	}
 }
