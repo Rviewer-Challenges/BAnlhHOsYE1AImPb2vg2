@@ -1,12 +1,13 @@
-import * as React from 'react';
-import { View, Text, Button } from 'react-native';
+import ListItem from '../list-item/list-item';
+import CustomFlatListSwipe from '../custom-flatlist-swipe/custom-flatlist-swipe';
+import NewsData from '../../utils/news-data';
 
 const BookmarksScreen = ({ navigation }) => {
 	return (
-		<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-			<Text>Bookmarks Screen</Text>
-			<Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
-		</View>
+		<CustomFlatListSwipe
+			data={NewsData.getBookmarks()}
+			renderItem={({ item }) => <ListItem {...item} />}
+		/>
 	);
 };
 
