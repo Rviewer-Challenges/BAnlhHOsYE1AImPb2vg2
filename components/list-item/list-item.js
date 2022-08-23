@@ -1,9 +1,10 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, Animated, PanResponder } from 'react-native';
 import formatDate from '../../utils/custom-date';
 import BookmarkIcon from '../../assets/icon-bookmark.svg';
 import ReadIcon from '../../assets/icon-read.svg';
 import UnReadIcon from '../../assets/icon-unread.svg';
+import NewsData from '../../utils/news-data';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -105,10 +106,10 @@ const ListItem = ({ id, title, thumbnail, pubDate, provider, bookmark, read, new
 
 		if (position > 25) {
 			status.isBookmark = !status.isBookmark;
-			newsItems.updateBookmark(id, status.isBookmark);
+			NewsData.newsItems.updateBookmark(id, status.isBookmark);
 		} else if (position < -25) {
 			status.isRead = !status.isRead;
-			newsItems.updateRead(id, status.isRead);
+			NewsData.newsItems.updateRead(id, status.isRead);
 		}
 
 		setStatus({ isBookmark: status.isBookmark, isRead: status.isRead });
@@ -126,6 +127,10 @@ const ListItem = ({ id, title, thumbnail, pubDate, provider, bookmark, read, new
 
 	thumbnail = thumbnail === '' ? provider.image : thumbnail;
 	pubDate = formatDate(pubDate);
+
+	useEffect(() => {
+		setStatus({ isBookmark: bookmark, isRead: read });
+	}, [bookmark, read]);
 
 	return (
 		<View style={{ backgroundColor: backgroundColor }}>
