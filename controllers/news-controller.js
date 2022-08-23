@@ -41,14 +41,16 @@ class NewsController {
 		});
 	}
 
-	getAll() {
+	get(fn = 'get') {
 		return new Promise((res, rej) => {
 			const providers = new Providers(this.#db);
 			let providersData = {};
 			let ns = [];
 
+			console.log(fn);
+
 			this.#news
-				.get()
+				[fn]()
 				.then((news) => {
 					let getProviders = [];
 					news.forEach((n) => {
@@ -78,6 +80,14 @@ class NewsController {
 				})
 				.catch((error) => rej(error));
 		});
+	}
+
+	getAll() {
+		return this.get();
+	}
+
+	getBookmarks() {
+		return this.get('getBookmarks');
 	}
 
 	updateBookmark(id, status) {
