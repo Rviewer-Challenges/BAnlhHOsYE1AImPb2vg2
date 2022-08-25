@@ -87,7 +87,6 @@ const NavigationBarBtn = ({
 			onPress={(event) => {
 				if (!enabled || isActivated) return false;
 				thisBtn.current.measureInWindow((left) => {
-					console.log({ left });
 					onPress(event, left);
 				});
 				if (!isActivated) {
