@@ -5,6 +5,8 @@ import BookmarkIcon from '../../assets/icon-bookmark.svg';
 import ReadIcon from '../../assets/icon-read.svg';
 import UnReadIcon from '../../assets/icon-unread.svg';
 import NewsData from '../../utils/news-data';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -75,7 +77,9 @@ const styles = StyleSheet.create({
 	swipeLeft: { backgroundColor: '#17c3b2' },
 });
 
-const ListItem = ({ id, title, thumbnail, pubDate, provider, bookmark, read, newsItems }) => {
+const ListItem = ({ id, title, thumbnail, pubDate, provider, bookmark, read }) => {
+	const navigation = useNavigation();
+
 	const pan = useRef(new Animated.ValueXY()).current;
 
 	const panResponder = useRef(
@@ -180,30 +184,45 @@ const ListItem = ({ id, title, thumbnail, pubDate, provider, bookmark, read, new
 					restorePosition();
 				}}
 			>
-				{thumbnail === '' ? (
-					<View style={[styles.content]}>
-						<Text style={styles.title}>{title}</Text>
-						<View style={styles.row}>
-							<Text style={styles.date}>{pubDate}</Text>
-							<Text style={[styles.footer, styles.footerRight]}>
-								{provider.title}
-							</Text>
+				<TouchableWithoutFeedback
+					onPress={() => {
+						console.log('ABRIENDO NOTICIA');
+						navigation.navigate('Item', {
+							id,
+							title,
+							thumbnail,
+							pubDate,
+							provider,
+							bookmark,
+							read,
+						});
+					}}
+				>
+					{thumbnail === '' ? (
+						<View style={[styles.content]}>
+							<Text style={styles.title}>{title}</Text>
+							<View style={styles.row}>
+								<Text style={styles.date}>{pubDate}</Text>
+								<Text style={[styles.footer, styles.footerRight]}>
+									{provider.title}
+								</Text>
+							</View>
 						</View>
-					</View>
-				) : (
-					<View style={[styles.content, styles.row]}>
-						<View>
-							<Image style={styles.img} source={{ uri: thumbnail }} />
-							<Text style={styles.date}>{pubDate}</Text>
+					) : (
+						<View style={[styles.content, styles.row]}>
+							<View>
+								<Image style={styles.img} source={{ uri: thumbnail }} />
+								<Text style={styles.date}>{pubDate}</Text>
+							</View>
+							<View style={styles.text}>
+								<Text style={[styles.title, status.isRead ? styles.titleRead : {}]}>
+									{title}
+								</Text>
+								<Text style={styles.footer}>{provider.title}</Text>
+							</View>
 						</View>
-						<View style={styles.text}>
-							<Text style={[styles.title, status.isRead ? styles.titleRead : {}]}>
-								{title}
-							</Text>
-							<Text style={styles.footer}>{provider.title}</Text>
-						</View>
-					</View>
-				)}
+					)}
+				</TouchableWithoutFeedback>
 			</Animated.View>
 		</View>
 	);

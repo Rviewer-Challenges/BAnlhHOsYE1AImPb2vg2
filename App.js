@@ -9,6 +9,7 @@ import { Text, View } from 'react-native';
 import DB_SQLite from './utils/db-sqlite';
 import NewsItems from './utils/news-items';
 import NewsData from './utils/news-data';
+import ItemScreen from './components/item-screen/item-screen';
 
 const horizontalAnimation = {
 	cardStyleInterpolator: ({ current, layouts }) => {
@@ -58,6 +59,7 @@ export default function App() {
 					component={SettingsScreen}
 					options={horizontalAnimation}
 				/>
+				<Stack.Screen name="Item" component={ItemScreen} options={horizontalAnimation} />
 			</Stack.Navigator>
 			<NavigationBar />
 		</NavigationContainer>
