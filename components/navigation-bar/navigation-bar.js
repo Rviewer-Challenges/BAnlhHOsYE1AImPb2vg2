@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
 		borderRadius: 3,
 	},
 	buttonColors: {
-		disabled: 'rgba(3, 7, 30, 0)',
+		//disabled: 'rgba(3, 7, 30, 0)',
 		deactivated: 'rgba(3, 7, 30, 1)',
 		activated: 'rgba(3, 7, 30, 1)',
 		home: 'rgb(0, 53, 102)',
