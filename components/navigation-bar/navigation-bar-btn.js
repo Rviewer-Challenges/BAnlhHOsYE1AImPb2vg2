@@ -1,15 +1,19 @@
 import { View, StyleSheet, TouchableWithoutFeedback, Animated } from 'react-native';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Svg from 'react-native-svg';
 
 const styles = StyleSheet.create({
+	container: {
+		width: 50,
+		height: 50,
+		marginRight: 5,
+		marginLeft: 5,
+	},
 	button: {
 		justifyContent: 'center',
 		alignContent: 'center',
 		width: 50,
 		height: 50,
-		marginRight: 5,
-		marginLeft: 5,
 	},
 });
 
@@ -23,23 +27,41 @@ const NavigationBarBtn = ({
 	children,
 }) => {
 	const AnimatedSvg = Animated.createAnimatedComponent(Svg);
-	const colorAnim = useRef(new Animated.Value(0)).current;
 	const transformScaleAnim = useRef(new Animated.Value(0)).current;
 
-	const changeColor = (to) => {
-		Animated.timing(colorAnim, {
-			toValue: to,
+	const opacityBtnAnim = useRef(new Animated.Value(0)).current;
+	const opacityInAnim = useRef(new Animated.Value(0)).current;
+	const opacityOutAnim = useRef(new Animated.Value(1)).current;
+
+	const changeVisibility = () => {
+		Animated.timing(opacityBtnAnim, {
+			toValue: enabled ? 1 : 0,
 			duration: 250,
-			useNativeDriver: false,
+			useNativeDriver: true,
 		}).start();
 	};
 
-	const pressAnimStart = (duration = 0) => {
+	const changeColor = () => {
+		Animated.timing(opacityInAnim, {
+			toValue: isActivated ? 1 : 0,
+			duration: 250,
+			useNativeDriver: true,
+		}).start();
+
+		Animated.timing(opacityOutAnim, {
+			toValue: isActivated ? 0 : 1,
+			duration: 250,
+			useNativeDriver: true,
+		}).start();
+	};
+
+	const pressAnimStart = () => {
 		let animatedTiming = Animated.timing(transformScaleAnim, {
 			toValue: 2,
 			duration: 500,
-			useNativeDriver: false,
+			useNativeDriver: true,
 		});
+
 		animatedTiming.reset();
 		animatedTiming.start();
 	};
@@ -47,28 +69,25 @@ const NavigationBarBtn = ({
 	const isActivated = activated == index;
 
 	let thisBtn = useRef(null);
-	let color = colorAnim.interpolate({
-		inputRange: [0, 1, 2],
-		outputRange: [colors.disabled, colors.deactivated, colors.activated],
-	});
 	let transformScale = transformScaleAnim.interpolate({
 		inputRange: [0, 1, 2],
 		outputRange: [1, 0.5, 1],
 	});
 
-	if (!enabled) {
-		changeColor(0);
-	}
+	useEffect(() => {
+		changeVisibility();
+	}, [enabled]);
 
-	if (enabled) {
-		isActivated ? changeColor(2) : changeColor(1);
-	}
+	useEffect(() => {
+		changeColor();
+	}, [activated]);
 
 	return (
 		<TouchableWithoutFeedback
 			onPress={(event) => {
-				if (!enabled) return false;
+				if (!enabled || isActivated) return false;
 				thisBtn.current.measureInWindow((left) => {
+					console.log({ left });
 					onPress(event, left);
 				});
 				if (!isActivated) {
@@ -78,22 +97,49 @@ const NavigationBarBtn = ({
 		>
 			<View
 				ref={thisBtn}
-				style={[styles.button, styles.buttonActive]}
 				onLayout={(event) => onLayout(event, event.nativeEvent.layout.x)}
+				style={styles.container}
 			>
-				<AnimatedSvg
+				<Animated.View
 					style={{
-						color: color,
-						marginRight: 'auto',
-						marginLeft: 'auto',
-						transform: [{ scale: transformScale }],
+						opacity: opacityBtnAnim,
 					}}
-					width="25"
-					height="25"
-					viewBox="0 0 40 40"
 				>
-					{children}
-				</AnimatedSvg>
+					<View>
+						<View style={styles.button}>
+							<AnimatedSvg
+								style={{
+									color: colors.deactivated,
+									marginRight: 'auto',
+									marginLeft: 'auto',
+									transform: [{ scale: transformScale }],
+									opacity: opacityOutAnim,
+								}}
+								width="25"
+								height="25"
+								viewBox="0 0 40 40"
+							>
+								{children}
+							</AnimatedSvg>
+						</View>
+						<View style={[styles.button, { position: 'absolute' }]}>
+							<AnimatedSvg
+								style={{
+									color: colors.activated,
+									marginRight: 'auto',
+									marginLeft: 'auto',
+									transform: [{ scale: transformScale }],
+									opacity: opacityInAnim,
+								}}
+								width="25"
+								height="25"
+								viewBox="0 0 40 40"
+							>
+								{children}
+							</AnimatedSvg>
+						</View>
+					</View>
+				</Animated.View>
 			</View>
 		</TouchableWithoutFeedback>
 	);
