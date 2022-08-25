@@ -27,7 +27,6 @@ const NavigationBarBtn = ({
 	const transformScaleAnim = useRef(new Animated.Value(0)).current;
 
 	const changeColor = (to) => {
-		console.log({ index, to });
 		Animated.timing(colorAnim, {
 			toValue: to,
 			duration: 250,
