@@ -1,8 +1,9 @@
-import { View, StyleSheet, Animated, Easing } from 'react-native';
+import { View, StyleSheet, Animated, Easing, Text } from 'react-native';
 import { useRef, useState } from 'react';
 import { Path } from 'react-native-svg';
 import NavigationBarBtn from './navigation-bar-btn';
 import { useNavigation } from '@react-navigation/native';
+import NavigationBottomBar from './navigation-bottom-bar';
 
 const styles = StyleSheet.create({
 	content: {
@@ -33,35 +34,8 @@ const styles = StyleSheet.create({
 const NavigationBar = ({ activeBack = false, activeRefresh = false }) => {
 	const navigation = useNavigation();
 
-	const bottomBarLeftAnim = useRef(new Animated.Value(-100)).current;
-	const bottomBarColorAnim = useRef(new Animated.Value(0)).current;
-
-	const moveBottomBar = (to) => {
-		Animated.timing(bottomBarLeftAnim, {
-			toValue: to,
-			duration: 250,
-			easing: Easing.linear,
-			useNativeDriver: false,
-		}).start();
-	};
-
-	const changeBottomBar = (to) => {
-		Animated.timing(bottomBarColorAnim, {
-			toValue: to,
-			duration: 250,
-			useNativeDriver: false,
-		}).start();
-	};
-
 	let [activated, setActivated] = useState(1);
-	let bottomBarColor = bottomBarColorAnim.interpolate({
-		inputRange: [0, 1, 2],
-		outputRange: [
-			styles.buttonColors.home,
-			styles.buttonColors.bookmarks,
-			styles.buttonColors.settings,
-		],
-	});
+	let [bottomBar, setBottomBar] = useState({ position: -100, finishColor: 'transparent' });
 
 	return (
 		<View style={styles.content}>
@@ -81,13 +55,12 @@ const NavigationBar = ({ activeBack = false, activeRefresh = false }) => {
 			<NavigationBarBtn
 				index="1"
 				onLayout={(event, left) => {
-					moveBottomBar(left);
+					setBottomBar({ position: left, finishColor: styles.buttonColors.home });
 				}}
 				onPress={(event, left) => {
 					console.log('HOME');
 					setActivated(1);
-					moveBottomBar(left);
-					changeBottomBar(0);
+					setBottomBar({ position: left, finishColor: styles.buttonColors.home });
 					navigation.navigate('Home');
 				}}
 				activated={activated}
@@ -106,8 +79,7 @@ const NavigationBar = ({ activeBack = false, activeRefresh = false }) => {
 				onPress={(event, left) => {
 					console.log('BOOKMARK');
 					setActivated(2);
-					moveBottomBar(left);
-					changeBottomBar(1);
+					setBottomBar({ position: left, finishColor: styles.buttonColors.bookmarks });
 					navigation.navigate('Bookmarks');
 				}}
 				activated={activated}
@@ -130,8 +102,7 @@ const NavigationBar = ({ activeBack = false, activeRefresh = false }) => {
 				onPress={(event, left) => {
 					console.log('CONFIG');
 					setActivated(3);
-					moveBottomBar(left);
-					changeBottomBar(2);
+					setBottomBar({ position: left, finishColor: styles.buttonColors.settings });
 					navigation.navigate('Settings');
 				}}
 				activated={activated}
@@ -162,15 +133,10 @@ const NavigationBar = ({ activeBack = false, activeRefresh = false }) => {
 					d="M16 18h-5.798l.002-.018a9.912 9.912 0 011.504-3.574 10.108 10.108 0 014.4-3.622 9.797 9.797 0 011.876-.582 10.156 10.156 0 014.036 0 9.956 9.956 0 015.05 2.722l2.832-2.824A14.072 14.072 0 0025.454 7.1a13.842 13.842 0 00-2.63-.816 14.158 14.158 0 00-5.638 0 13.88 13.88 0 00-2.632.818 14.08 14.08 0 00-6.16 5.068 13.956 13.956 0 00-2.108 5.01c-.056.27-.086.546-.126.82H0l8 8zm8 4h5.798l-.002.016a9.952 9.952 0 01-4.206 6.276 9.886 9.886 0 01-3.574 1.504 10.146 10.146 0 01-4.034 0 9.912 9.912 0 01-3.574-1.504 10.144 10.144 0 01-1.48-1.22L10.1 29.9a14.064 14.064 0 004.45 3c.848.36 1.734.634 2.63.816a14.14 14.14 0 005.636 0 14.062 14.062 0 008.79-5.89 13.948 13.948 0 002.106-5.006c.054-.27.086-.546.126-.82H40l-8-8z"
 				/>
 			</NavigationBarBtn>
-			<Animated.View
-				style={[
-					styles.bottomBar,
-					{
-						transform: [{ translateX: bottomBarLeftAnim }],
-						backgroundColor: bottomBarColor,
-					},
-				]}
-			></Animated.View>
+			<NavigationBottomBar
+				position={bottomBar.position}
+				finishColor={bottomBar.finishColor}
+			/>
 		</View>
 	);
 };
