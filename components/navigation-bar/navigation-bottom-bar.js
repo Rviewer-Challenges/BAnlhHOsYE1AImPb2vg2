@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Animated, Easing, StyleSheet, View } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -20,12 +20,16 @@ const NavigationBottomBar = ({ position, finishColor }) => {
 	const opacityOutAnim = useRef(new Animated.Value(1)).current;
 
 	const moveBottomBar = (to) => {
-		let translateXTiming = Animated.timing(translateXAnim, {
-			toValue: to,
-			duration: 250,
-			easing: Easing.linear,
-			useNativeDriver: true,
-		});
+		if (prevPosition.current < 0) {
+			translateXAnim.setValue(position);
+		} else {
+			Animated.timing(translateXAnim, {
+				toValue: to,
+				duration: 250,
+				easing: Easing.linear,
+				useNativeDriver: true,
+			}).start();
+		}
 
 		let opacityInTiming = Animated.timing(opacityInAnim, {
 			toValue: 1,
@@ -41,7 +45,11 @@ const NavigationBottomBar = ({ position, finishColor }) => {
 			useNativeDriver: true,
 		});
 
-		translateXTiming.start(({ finished }) => {
+		opacityInTiming.reset();
+		opacityInTiming.start();
+
+		opacityOutTiming.reset();
+		opacityOutTiming.start(({ finished }) => {
 			if (finished) {
 				viewRef.current.setNativeProps({
 					style: {
@@ -50,16 +58,15 @@ const NavigationBottomBar = ({ position, finishColor }) => {
 				});
 			}
 		});
-
-		opacityInTiming.reset();
-		opacityInTiming.start();
-
-		opacityOutTiming.reset();
-		opacityOutTiming.start();
 	};
 
 	let viewRef = useRef(null);
-	moveBottomBar(position);
+	let prevPosition = useRef(-100);
+
+	useEffect(() => {
+		moveBottomBar(position);
+		prevPosition.current = position;
+	}, [position]);
 
 	return (
 		<Animated.View
