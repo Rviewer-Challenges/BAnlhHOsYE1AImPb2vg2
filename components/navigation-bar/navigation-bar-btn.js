@@ -85,7 +85,7 @@ const NavigationBarBtn = ({
 	return (
 		<TouchableWithoutFeedback
 			onPress={(event) => {
-				if (!enabled || isActivated) return false;
+				if (!enabled) return false;
 				thisBtn.current.measureInWindow((left) => {
 					onPress(event, left);
 				});
