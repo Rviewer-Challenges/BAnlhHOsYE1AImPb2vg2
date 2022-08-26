@@ -1,5 +1,5 @@
 import { View, StyleSheet, Animated, Easing, Text } from 'react-native';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Path } from 'react-native-svg';
 import NavigationBarBtn from './navigation-bar-btn';
 import { useNavigation } from '@react-navigation/native';
@@ -31,11 +31,46 @@ const styles = StyleSheet.create({
 	},
 });
 
-const NavigationBar = ({ activeBack = false, activeRefresh = false }) => {
+const NavigationBar = ({ activeRefresh = false }) => {
 	const navigation = useNavigation();
 
-	let [activated, setActivated] = useState(1);
-	let [bottomBar, setBottomBar] = useState({ position: -100, finishColor: 'transparent' });
+	let [state, setState] = useState({
+		activated: 1,
+		bottomBar: { position: -100, finishColor: 'transparent' },
+		activeBack: false,
+	});
+	let prevState = useRef(JSON.stringify(state));
+
+	const changeState = (_state) => {
+		_state = { ...state, activeBack: false, ..._state };
+		prevState.current = JSON.stringify(_state);
+		setState(_state);
+	};
+
+	const navigationState = (event) => {
+		const routes = event?.data?.state?.routes;
+		if (routes) {
+			const lastRouteName = routes[routes.length - 1].name;
+			if (lastRouteName == 'Item') {
+				setState({
+					...state,
+					activated: 0,
+					bottomBar: { position: -100, finishColor: 'transparent' },
+					activeBack: true,
+				});
+			}
+		}
+	};
+
+	useEffect(() => {
+		navigation.addListener('state', (event) => {
+			navigationState(event);
+		});
+
+		return () => {
+			navigation.removeListener('state');
+		};
+	}, []);
 
 	return (
 		<View style={styles.content}>
@@ -43,8 +78,10 @@ const NavigationBar = ({ activeBack = false, activeRefresh = false }) => {
 				index="0"
 				onPress={(event, left) => {
 					console.log('BACK');
+					setState(JSON.parse(prevState.current));
+					navigation.goBack();
 				}}
-				enabled={activeBack}
+				enabled={state.activeBack}
 				colors={styles.buttonColors}
 			>
 				<Path
@@ -55,15 +92,20 @@ const NavigationBar = ({ activeBack = false, activeRefresh = false }) => {
 			<NavigationBarBtn
 				index="1"
 				onLayout={(event, left) => {
-					setBottomBar({ position: left, finishColor: styles.buttonColors.home });
+					setState({
+						...state,
+						bottomBar: { position: left, finishColor: styles.buttonColors.home },
+					});
 				}}
 				onPress={(event, left) => {
 					console.log('HOME');
-					setActivated(1);
-					setBottomBar({ position: left, finishColor: styles.buttonColors.home });
+					changeState({
+						activated: 1,
+						bottomBar: { position: left, finishColor: styles.buttonColors.home },
+					});
 					navigation.navigate('Home');
 				}}
-				activated={activated}
+				activated={state.activated}
 				colors={{
 					...styles.buttonColors,
 					activated: styles.buttonColors.home,
@@ -78,11 +120,16 @@ const NavigationBar = ({ activeBack = false, activeRefresh = false }) => {
 				index="2"
 				onPress={(event, left) => {
 					console.log('BOOKMARK');
-					setActivated(2);
-					setBottomBar({ position: left, finishColor: styles.buttonColors.bookmarks });
+					changeState({
+						activated: 2,
+						bottomBar: {
+							position: left,
+							finishColor: styles.buttonColors.bookmarks,
+						},
+					});
 					navigation.navigate('Bookmarks');
 				}}
-				activated={activated}
+				activated={state.activated}
 				colors={{
 					...styles.buttonColors,
 					activated: styles.buttonColors.bookmarks,
@@ -101,11 +148,16 @@ const NavigationBar = ({ activeBack = false, activeRefresh = false }) => {
 				index="3"
 				onPress={(event, left) => {
 					console.log('CONFIG');
-					setActivated(3);
-					setBottomBar({ position: left, finishColor: styles.buttonColors.settings });
+					changeState({
+						activated: 3,
+						bottomBar: {
+							position: left,
+							finishColor: styles.buttonColors.settings,
+						},
+					});
 					navigation.navigate('Settings');
 				}}
-				activated={activated}
+				activated={state.activated}
 				colors={{
 					...styles.buttonColors,
 					activated: styles.buttonColors.settings,
@@ -134,8 +186,8 @@ const NavigationBar = ({ activeBack = false, activeRefresh = false }) => {
 				/>
 			</NavigationBarBtn>
 			<NavigationBottomBar
-				position={bottomBar.position}
-				finishColor={bottomBar.finishColor}
+				position={state.bottomBar.position}
+				finishColor={state.bottomBar.finishColor}
 			/>
 		</View>
 	);
