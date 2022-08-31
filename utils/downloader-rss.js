@@ -1,5 +1,6 @@
 import NewsController from '../controllers/news-controller';
 import ProvidersController from '../controllers/providers-controller';
+import NewsContent from './news-content';
 import { rsstojsonConvert } from './rss-to-json';
 
 const downloaderRSS = (db) => {
@@ -36,7 +37,22 @@ const downloaderRSS = (db) => {
 				});
 				return newsController.register(news);
 			})
-			.then(() => res(newsController.getAll()))
+			.then(() => newsController.getAll())
+			.then((news) => {
+				items.forEach((item, j) => {
+					item = item.map((i) => {
+						const n = news.find((element) => element.guid == i.guid);
+						i.id = n.id;
+						i.contentSaved = n.contentSaved;
+						return i;
+					});
+				});
+
+				const newsContent = new NewsContent(newsController);
+				newsContent.save(items).catch((error) => console.log('ERROR', error));
+
+				res(news);
+			})
 			.catch((error) => rej(error));
 	});
 };
