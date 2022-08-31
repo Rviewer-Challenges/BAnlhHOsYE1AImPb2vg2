@@ -132,13 +132,13 @@ class RSStoJSON {
 		const guid = this.getDataFromPatron(data, '(guid|id)', 2);
 		const author = this.getAuthor(data);
 		const description = this.getContent(data, 'description');
-		const content = this.getContent(data, '(content|content:encoded)', 2);
+		let content = this.getContent(data, '(content|content:encoded)', 2);
 		let thumbnail = this.getThumbnail(data);
-		if (thumbnail === '') {
-			thumbnail = this.getThumbnailFromImgTag(description + ' ' + content);
-		}
 
-		return { title, pubDate, link, guid, author, thumbnail };
+		if (thumbnail === '') thumbnail = this.getThumbnailFromImgTag(description + ' ' + content);
+		if (description.length > content.length) content = description;
+
+		return { title, pubDate, link, guid, author, thumbnail, content };
 	}
 
 	getInfo(data) {
