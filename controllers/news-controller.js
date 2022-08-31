@@ -97,6 +97,10 @@ class NewsController {
 	updateRead(id, status) {
 		return this.#news.setRead(id, status);
 	}
+
+	updateContentSaved(id, status) {
+		return this.#news.setContentSaved(id, status);
+	}
 }
 
 export default NewsController;

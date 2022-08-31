@@ -20,7 +20,8 @@ class News {
 				author TEXT,
 				thumbnail TEXT,
 				read BOOL,
-				bookmark BOOL
+				bookmark BOOL,
+				contentSaved BOOL
 			);`
 		);
 	}
@@ -29,7 +30,7 @@ class News {
 		return new Promise((res, rej) =>
 			this.#db
 				.execute(
-					'INSERT INTO news (providerId, guid, title, pubDate, link, author, thumbnail, read, bookmark) values (?, ?, ?, ?, ?, ?, ?, 0, 0)',
+					'INSERT INTO news (providerId, guid, title, pubDate, link, author, thumbnail, read, bookmark, contentSaved) values (?, ?, ?, ?, ?, ?, ?, 0, 0, 0)',
 					[
 						data.providerId,
 						data.guid,
@@ -85,6 +86,15 @@ class News {
 		return new Promise((res, rej) => {
 			this.#db
 				.execute('UPDATE news SET read = ? WHERE id = ?', [status, id])
+				.then((result) => res(result))
+				.catch((error) => rej(error));
+		});
+	}
+
+	setContentSaved(id, status) {
+		return new Promise((res, rej) => {
+			this.#db
+				.execute('UPDATE news SET contentSaved = ? WHERE id = ?', [status, id])
 				.then((result) => res(result))
 				.catch((error) => rej(error));
 		});
