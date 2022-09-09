@@ -10,6 +10,7 @@ import DB_SQLite from './utils/db-sqlite';
 import NewsItems from './utils/news-items';
 import NewsData from './utils/news-data';
 import ItemScreen from './components/item-screen/item-screen';
+import downloaderRSS from './utils/downloader-rss';
 
 const horizontalAnimation = {
 	cardStyleInterpolator: ({ current, layouts }) => {
@@ -30,8 +31,9 @@ const horizontalAnimation = {
 
 const Stack = createStackNavigator();
 
-const db = new DB_SQLite('data22.db');
+const db = new DB_SQLite('data103.db');
 const newsItems = new NewsItems(db);
+newsItems.downloadRSS();
 
 NewsData.newsItems = newsItems;
 
