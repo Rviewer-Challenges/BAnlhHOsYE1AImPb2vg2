@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
 	swipeLeft: { backgroundColor: '#17c3b2' },
 });
 
-const ListItem = ({ id, title, thumbnail, pubDate, provider, bookmark, read }) => {
+const ListItem = ({ id, title, thumbnail, pubDate, provider, bookmark, read, link }) => {
 	const navigation = useNavigation();
 
 	const pan = useRef(new Animated.ValueXY()).current;
@@ -195,6 +195,7 @@ const ListItem = ({ id, title, thumbnail, pubDate, provider, bookmark, read }) =
 							provider,
 							bookmark,
 							read,
+							link
 						});
 					}}
 				>

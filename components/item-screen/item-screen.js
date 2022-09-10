@@ -3,6 +3,7 @@ import { Text, View, Image, StyleSheet, ScrollView, Easing, Animated } from 'rea
 import NewsData from '../../utils/news-data';
 import NewsContent from '../../utils/news-content';
 import ItemContentWebView from '../item-content-webview/item-content-webview';
+import ItemContentGoBtn from '../item-content-go-btn/item-content-go-btn';
 
 const styles = StyleSheet.create({
 	container: {
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
 });
 
 const ItemScreen = ({ route, navigation }) => {
-	const { id, title, thumbnail, pubDate, provider, bookmark, read } = route.params;
+	const { id, title, thumbnail, pubDate, provider, bookmark, read, link } = route.params;
 
 	const [contentHTML, setContentHTML] = useState('');
 
@@ -65,7 +66,11 @@ const ItemScreen = ({ route, navigation }) => {
 		>
 			<ScrollView>
 				<Animated.View style={{ opacity: opacity }}>
-					<View>
+					<View
+						style={{
+							paddingBottom: 30,
+						}}
+					>
 						<Image style={{ width: '100%', height: 275 }} source={{ uri: thumbnail }} />
 						<View style={styles.content}>
 							<Text style={styles.title}>{title}</Text>
@@ -78,6 +83,9 @@ const ItemScreen = ({ route, navigation }) => {
 					</View>
 				</Animated.View>
 			</ScrollView>
+			<Animated.View style={{ opacity: opacity }}>
+				<ItemContentGoBtn link={link} />
+			</Animated.View>
 		</View>
 	);
 };
