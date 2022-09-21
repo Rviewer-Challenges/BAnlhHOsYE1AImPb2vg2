@@ -1,7 +1,18 @@
 import { Linking } from 'react-native';
 import WebView from 'react-native-webview';
+import NewsData from '../../utils/news-data';
 
-const ItemContentWebView = ({ thumbnail, title, pubDate, provider, link, source, onReady }) => {
+const ItemContentWebView = ({
+	id,
+	thumbnail,
+	title,
+	pubDate,
+	provider,
+	link,
+	source,
+	bookmark,
+	onReady,
+}) => {
 	return (
 		<WebView
 			style={{
@@ -18,6 +29,8 @@ const ItemContentWebView = ({ thumbnail, title, pubDate, provider, link, source,
 						Linking.openURL(message);
 					} else if (type == 'ready') {
 						onReady();
+					} else if (type == 'bookmark') {
+						NewsData.newsItems.updateBookmark(id, message);
 					}
 				} catch (e) {
 					console.log(e);
@@ -112,12 +125,47 @@ const ItemContentWebView = ({ thumbnail, title, pubDate, provider, link, source,
 						table p{
 							margin: 0;
 						}
+						.button{
+							display: flex;
+							justify-content: center;
+							align-items: center;
+							width: 3.2rem;
+							height: 3.2rem;
+							border-radius: 50%;
+							outline: none;
+							-webkit-tap-highlight-color: rgba(0,0,0,0);
+							transition: all 250ms;
+							transition-timing-function: ease;
+						}
+						.button svg{
+							width: auto;
+							height: 50%;
+							transition: transform 250ms;
+							transition-timing-function: ease;
+						}
+						.button:active svg, .button:active span{
+							transform: scale(0.5);
+						}
 						.cover{
 							width: 100%;
 							height: 38vh;
 							background-image: url('${thumbnail}');
 							background-position: center;
 							background-size: cover;
+							display: flex;
+						}
+						.cover .button{
+							-webkit-appearance: none;
+							margin: auto 0.6rem 0.6rem auto;
+							fill: #03071e;
+							border: none;
+							background: rgba( 255, 255, 255, 0.5 );
+							backdrop-filter: blur( 4px );
+							-webkit-backdrop-filter: blur( 4px );
+						}
+						.cover .button.selected{
+							fill: #3D2D00;
+							background: rgba( 255, 214, 10, 0.5 );
 						}
 						.content{
 							padding: 0 0.6rem 3.4rem;
@@ -136,36 +184,20 @@ const ItemContentWebView = ({ thumbnail, title, pubDate, provider, link, source,
 							font-size: 0.9rem;
 						}
 						.go-to-btn{
-							display: flex;
-							justify-content: center;
-							align-items: center;
-							width: 3.2rem;
-							height: 3.2rem;
 							position: fixed;
 							background-color: #dde5b6;
-							border-radius: 50%;
 							bottom: 0.6rem;
 							right: 0.6rem;
 							left: auto;
 							margin: auto;
 							right: 0.6rem;
-							-webkit-tap-highlight-color: rgba(0,0,0,0);
 							color: #354f52;
-							transition: all 250ms;
-							transition-timing-function: ease;
 						}
 						.go-to-btn:focus, .go-to-btn:active{
 							color: #354f52;
 						}
 						.go-to-btn svg{
 							fill: #354f52;
-							width: auto;
-							height: 50%;
-							transition: transform 250ms;
-							transition-timing-function: ease;
-						}
-						.go-to-btn:active svg, .go-to-btn:active span{
-							transform: scale(0.5);
 						}
 						.go-to-btn span{
 							display: block;
@@ -193,7 +225,11 @@ const ItemContentWebView = ({ thumbnail, title, pubDate, provider, link, source,
 				</head>
 				<body>
 				<div class="container">
-					<div class="cover"></div>
+					<div class="cover">
+						<button id="bookmark-btn" class="button ${bookmark ? 'selected' : ''}">
+							<svg width="26" height="32" viewBox="0 0 26 32" xmlns="http://www.w3.org/2000/svg"><path d="M22.75 0H3.25C1.458 0 0 1.435 0 3.2V32l13-7.315L26 32V3.2C26 1.435 24.542 0 22.75 0zm0 26.485L13 21l-9.75 5.485V3.2h19.5z"/></svg>
+						</button>
+					</div>
 					<div class="content">
 						<header class="header">
 							<h1>${title}</h1>
@@ -201,7 +237,7 @@ const ItemContentWebView = ({ thumbnail, title, pubDate, provider, link, source,
 							<span>${provider.title}</span>
 						</header>
 						${source}
-						<a href="${link}" class="go-to-btn">
+						<a href="${link}" class="button go-to-btn">
 							<svg height="18" width="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18"><path d="M10 0l3.293 3.293-7 7 1.414 1.414 7-7L18 8V0z"/><path d="M16 16H2V2h7L7 0H2C.897 0 0 .897 0 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2v-5l-2-2z"/></svg>
 							<span>Visitar sitio</span>
 						</a>
@@ -234,6 +270,14 @@ const ItemContentWebView = ({ thumbnail, title, pubDate, provider, link, source,
 						}else{
 							document.body.classList.remove('scroll-bottom');
 						}
+					});
+
+					const bookmarkBtn = document.getElementById('bookmark-btn');
+					let isBookmark = ${bookmark ? 'true' : 'false'};
+					bookmarkBtn.addEventListener('click', () => {
+						isBookmark = !isBookmark;
+						bookmarkBtn.classList[isBookmark ? 'add' : 'remove']('selected');
+						postMessage('bookmark', isBookmark);
 					});
 				</script>
 				</body>

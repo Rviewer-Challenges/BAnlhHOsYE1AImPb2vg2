@@ -36,12 +36,14 @@ const ItemScreen = ({ route, navigation }) => {
 		>
 			<Animated.View style={{ opacity: opacity, height: '100%' }}>
 				<ItemContentWebView
+					id={id}
 					title={title}
 					thumbnail={thumbnail}
 					pubDate={pubDate}
 					provider={provider}
 					link={link}
 					source={contentHTML}
+					bookmark={bookmark}
 					onReady={() => opacityIn()}
 				/>
 			</Animated.View>
