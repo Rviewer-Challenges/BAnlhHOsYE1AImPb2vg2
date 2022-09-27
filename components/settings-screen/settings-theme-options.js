@@ -3,13 +3,14 @@ import { View, Text } from 'react-native';
 import SettingsIconBtn from './settings-icon-btn';
 import { Path } from 'react-native-svg';
 
-const SettingsThemeOptions = ({ styles }) => {
+const SettingsThemeOptions = ({ styles, onChange }) => {
 	let [options, setData] = useState({ dark: false, system: true, light: false });
 	const selected = (id) => {
 		if (!options[id]) {
 			options = { ...options };
 			for (const key in options) options[key] = false;
 			options[id] = true;
+			onChange(id);
 			setData(options);
 		}
 	};
