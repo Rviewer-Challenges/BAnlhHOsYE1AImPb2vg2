@@ -1,4 +1,5 @@
-import { View, Text, TouchableWithoutFeedback, StyleSheet } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { View, Text, TouchableWithoutFeedback, StyleSheet, Animated } from 'react-native';
 import Svg from 'react-native-svg';
 
 const styles = StyleSheet.create({
@@ -6,11 +7,9 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		borderWidth: 1,
-		borderColor: '#000',
 		borderRadius: 7,
+		borderColor: '#fff',
 		padding: 7,
-		elevation: 2,
-		shadowColor: '#52006A',
 	},
 	icon: {
 		color: '#000',
@@ -24,13 +23,66 @@ const styles = StyleSheet.create({
 	},
 });
 
-const SettingsIconBtn = ({ icon, text, style }) => {
+const SettingsIconBtn = ({ id = '', icon, text, style, activated = false, onPress }) => {
+	const AnimatedSvg = Animated.createAnimatedComponent(Svg);
+	const transformScaleAnim = useRef(new Animated.Value(0)).current;
+	const iconAnim = () => {
+		let animatedTiming = Animated.timing(transformScaleAnim, {
+			toValue: 2,
+			duration: 500,
+			useNativeDriver: true,
+		});
+
+		animatedTiming.reset();
+		animatedTiming.start();
+	};
+
+	let transformScale = transformScaleAnim.interpolate({
+		inputRange: [0, 1, 2],
+		outputRange: [1, 0.5, 1],
+	});
+
+	const opacityValue = activated ? 1 : 0;
+	const opacityChange = (to) => {
+		Animated.timing(opacityAnim, {
+			toValue: to,
+			duration: 500,
+			useNativeDriver: true,
+		}).start();
+	};
+	let opacityAnim = useRef(new Animated.Value(opacityValue)).current;
+
+	useEffect(() => {
+		opacityChange(opacityValue);
+	}, [activated]);
+
 	return (
-		<TouchableWithoutFeedback>
-			<View style={[styles.content, style]}>
-				<Svg style={styles.icon} height="30" width="30" viewBox="0 0 20 20">
+		<TouchableWithoutFeedback
+			onPress={() => {
+				iconAnim();
+				onPress(id);
+			}}
+		>
+			<View style={[styles.content, activated ? styles.activated : {}, style]}>
+				<Animated.View
+					style={{
+						position: 'absolute',
+						backgroundColor: '#fff',
+						top: 0,
+						bottom: 0,
+						left: 0,
+						right: 0,
+						opacity: opacityAnim,
+					}}
+				></Animated.View>
+				<AnimatedSvg
+					style={[styles.icon, { transform: [{ scale: transformScale }] }]}
+					height="30"
+					width="30"
+					viewBox="0 0 20 20"
+				>
 					{icon}
-				</Svg>
+				</AnimatedSvg>
 				<Text style={styles.text}>{text}</Text>
 			</View>
 		</TouchableWithoutFeedback>
