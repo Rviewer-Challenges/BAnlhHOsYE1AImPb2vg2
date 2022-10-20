@@ -3,16 +3,10 @@ import { View, Text, TouchableWithoutFeedback, Animated } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 const SettingsCheckbox = ({ value, text, activated, onChange }) => {
-	console.log('---------------------------');
-	console.log({ activated });
-
 	const AnimatedSvg = Animated.createAnimatedComponent(Svg);
 	let [isActivated, setIsActivated] = useState(activated);
 
-	console.log({ isActivated });
-
 	const opacityValue = isActivated ? 1 : 0;
-	console.log({ opacityValue });
 	const opacityChange = (to) => {
 		Animated.timing(opacityAnim, {
 			toValue: to,

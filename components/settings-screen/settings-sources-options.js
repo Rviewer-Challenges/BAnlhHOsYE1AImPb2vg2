@@ -13,27 +13,13 @@ const SettingsSourcesOptions = ({ styles, sources, onChange }) => {
 				}}
 			>
 				{sources.map((source) => {
-					console.log('SOURCE 2', { source });
 					return (
 						<SettingsCheckbox
 							key={source.url}
 							value={source.url}
 							text={source.name}
 							activated={source.isActivated}
-							onChange={(value, isActivated) => {
-								onChange(value, isActivated);
-								/*
-							console.log({ value, isActivated });
-							sources.map((source) => () => {
-								console.log({ source });
-								if (source.value == value) {
-									source.isActivated = isActivated;
-								}
-								return source;
-							});
-							onChange(sources);
-							*/
-							}}
+							onChange={(value, isActivated) => onChange(value, isActivated)}
 						/>
 					);
 				})}
