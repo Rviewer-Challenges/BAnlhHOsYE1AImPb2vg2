@@ -2,6 +2,8 @@ import { View, ScrollView, StyleSheet, Text } from 'react-native';
 import Constants from 'expo-constants';
 import SettingsThemeOptions from './settings-theme-options';
 import SettingsSourcesOptions from './settings-sources-options';
+import { useState } from 'react';
+import Settings from '../../utils/settings';
 
 const styles = StyleSheet.create({
 	container: {
@@ -41,27 +43,39 @@ const styles = StyleSheet.create({
 });
 
 const SettingsScreen = ({ navigation }) => {
+	const settings = new Settings();
+	settings
+		.get()
+		.then((options) => setOptions(options))
+		.catch((error) => console.log(error));
+	let [options, setOptions] = useState({});
+
 	return (
 		<View style={styles.container}>
 			<Text style={styles.header}>Configuración</Text>
-			<ScrollView style={styles.content}>
-				<SettingsThemeOptions
-					styles={styles}
-					onChange={(theme) => {
-						console.log('CHANGE THEME', theme);
-					}}
-				/>
-				<SettingsSourcesOptions
-					styles={styles}
-					sources={[
-						{ name: 'Xataka México', url: 'http://feeds.weblogssl.com/xatakamx', isActivated: false },
-						{ name: 'Arduino', url: 'https://blog.arduino.cc/feed', isActivated: true },
-					]}
-					onChange={(sources) => {
-						console.log({ sources });
-					}}
-				/>
-			</ScrollView>
+			{options.theme != undefined ? (
+				<ScrollView style={styles.content}>
+					<SettingsThemeOptions
+						styles={styles}
+						onChange={(theme) => {
+							console.log('CHANGE THEME', theme);
+						}}
+					/>
+					<SettingsSourcesOptions
+						styles={styles}
+						sources={options.sources}
+						onChange={(value, isActivated) => {
+							options.sources = options.sources.map((source) => {
+								if (source.url == value) source.isActivated = isActivated;
+								return source;
+							});
+							settings.set('sources', options.sources);
+						}}
+					/>
+				</ScrollView>
+			) : (
+				<Text>Cargando...</Text>
+			)}
 		</View>
 	);
 };
