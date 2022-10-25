@@ -6,11 +6,11 @@ import HomeScreen from './components/home-screen/home-screen';
 import BookmarksScreen from './components/bookmarks-screen/bookmarks-screen';
 import SettingsScreen from './components/settings-screen/settings-screen';
 import { Text, View } from 'react-native';
-import DB_SQLite from './utils/db-sqlite';
 import NewsItems from './utils/news-items';
 import NewsData from './utils/news-data';
 import ItemScreen from './components/item-screen/item-screen';
-import downloaderRSS from './utils/downloader-rss';
+import Settings from './utils/settings';
+import DB_LOADED from './utils/db-sqlite-loaded';
 
 const horizontalAnimation = {
 	cardStyleInterpolator: ({ current, layouts }) => {
@@ -31,17 +31,14 @@ const horizontalAnimation = {
 
 const Stack = createStackNavigator();
 
-const db = new DB_SQLite('data103.db');
-const newsItems = new NewsItems(db);
-newsItems.downloadRSS();
-
-NewsData.newsItems = newsItems;
+DB_LOADED.init();
+NewsData.init();
 
 export default function App() {
 	let [newsWasLoaded, setNewsWasLoaded] = useState(false);
 
 	useEffect(() => {
-		newsItems
+		NewsData.newsItems
 			.getAllItems()
 			.then((news) => setNewsWasLoaded(true))
 			.catch((error) => console.log(error));
