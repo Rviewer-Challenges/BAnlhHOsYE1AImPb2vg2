@@ -4,6 +4,9 @@ import SettingsThemeOptions from './settings-theme-options';
 import SettingsSourcesOptions from './settings-sources-options';
 import { useState } from 'react';
 import Settings from '../../utils/settings';
+import ProvidersController from '../../controllers/providers-controller';
+import DB_LOADED from '../../utils/db-sqlite-loaded';
+import NewsData from '../../utils/news-data';
 
 const styles = StyleSheet.create({
 	container: {
@@ -44,11 +47,13 @@ const styles = StyleSheet.create({
 
 const SettingsScreen = ({ navigation }) => {
 	const settings = new Settings();
+	const providersController = new ProvidersController(DB_LOADED.get());
+	let [options, setOptions] = useState({});
+
 	settings
 		.get()
 		.then((options) => setOptions(options))
 		.catch((error) => console.log(error));
-	let [options, setOptions] = useState({});
 
 	return (
 		<View style={styles.container}>
@@ -69,7 +74,13 @@ const SettingsScreen = ({ navigation }) => {
 								if (source.url == value) source.isActivated = isActivated;
 								return source;
 							});
-							settings.set('sources', options.sources);
+
+							settings
+								.set('sources', options.sources)
+								.then(() => providersController.updateActivate(value, isActivated))
+								.catch((error) => console.log(error));
+
+							NewsData.needReload = true;
 						}}
 					/>
 				</ScrollView>
