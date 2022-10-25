@@ -49,7 +49,20 @@ class News {
 	get() {
 		return new Promise((res, rej) => {
 			this.#db
-				.select('SELECT * FROM news')
+				.select(
+					`
+					SELECT 
+						news.*,
+						providers.title AS providerTitle,
+						providers.image AS providerImage
+					FROM
+						news
+					INNER JOIN providers
+						ON providers.id = news.providerId
+					WHERE
+						providers.activated = 1
+					`
+				)
 				.then((rows) => res(rows))
 				.catch((error) => rej(error));
 		});
@@ -58,7 +71,21 @@ class News {
 	getBookmarks() {
 		return new Promise((res, rej) => {
 			this.#db
-				.select('SELECT * FROM news WHERE bookmark=1')
+				.select(
+					`
+					SELECT 
+						news.*,
+						providers.title AS providerTitle,
+						providers.image AS providerImage
+					FROM
+						news
+					INNER JOIN providers
+						ON providers.id = news.providerId
+					WHERE
+						providers.activated = 1
+						AND bookmark = 1
+					`
+				)
 				.then((rows) => res(rows))
 				.catch((error) => rej(error));
 		});
