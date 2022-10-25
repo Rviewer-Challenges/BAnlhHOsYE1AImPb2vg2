@@ -2,16 +2,26 @@ import NewsController from '../controllers/news-controller';
 import ProvidersController from '../controllers/providers-controller';
 import NewsContent from './news-content';
 import { rsstojsonConvert } from './rss-to-json';
+import Settings from './settings';
 
 const downloaderRSS = (db) => {
 	return new Promise((res, rej) => {
-		const channels = ['http://feeds.weblogssl.com/xatakamx', 'https://blog.arduino.cc/feed/'];
-		const getChannels = channels.map((channel) => fetch(channel));
+		const settings = new Settings();
 		const providersController = new ProvidersController(db);
 		const newsController = new NewsController(db);
+		let channels;
 		let items = [];
 
-		Promise.all(getChannels)
+		settings
+			.get()
+			.then(({ sources }) => {
+				let getChannels;
+				channels = sources
+					.filter((source) => source.isActivated)
+					.map((source) => source.url);
+				getChannels = channels.map((channel) => fetch(channel));
+				return Promise.all(getChannels);
+			})
 			.then((response) => {
 				response = response.map((response) => response.text());
 				return Promise.all(response);
@@ -39,18 +49,21 @@ const downloaderRSS = (db) => {
 			})
 			.then(() => newsController.getAll())
 			.then((news) => {
-				items.forEach((item, j) => {
-					item = item.map((i) => {
-						const n = news.find((element) => element.guid == i.guid);
-						i.id = n.id;
-						i.contentSaved = n.contentSaved;
-						return i;
+				if (news.length > 0) {
+					let newsContent;
+
+					items.forEach((item, j) => {
+						item = item.map((i) => {
+							const n = news.find((element) => element.guid == i.guid);
+							i.id = n.id;
+							i.contentSaved = n.contentSaved;
+							return i;
+						});
 					});
-				});
 
-				const newsContent = new NewsContent(newsController);
-				newsContent.save(items).catch((error) => console.log('ERROR', error));
-
+					newsContent = new NewsContent(newsController);
+					newsContent.save(items).catch((error) => console.log('ERROR', error));
+				}
 				res(news);
 			})
 			.catch((error) => rej(error));
