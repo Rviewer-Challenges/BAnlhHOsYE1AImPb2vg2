@@ -31,6 +31,11 @@ const horizontalAnimation = {
 
 const Stack = createStackNavigator();
 
+// LOAD SETTINGS
+const settings = new Settings();
+settings.get();
+
+//LOAD NEWS
 DB_LOADED.init();
 NewsData.init();
 
