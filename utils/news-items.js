@@ -13,19 +13,15 @@ class NewsItems {
 	}
 
 	downloadRSS() {
-		clearTimeout(this.#timerDownloadRSS);
-
-		downloaderRSS(this.#db)
-			.then((news) => {
-				console.log('Obteniendo automaticamente');
-
-				NewsData.items = news;
-
-				this.#timerDownloadRSS = setTimeout(() => {
-					this.downloadRSS();
-				}, 60000);
-			})
-			.catch((error) => console.log(error));
+		return new Promise((res, rej) => {
+			downloaderRSS(this.#db)
+				.then((news) => {
+					console.log('Obteniendo automaticamente');
+					NewsData.items = news;
+					res();
+				})
+				.catch((error) => rej(error));
+		});
 	}
 
 	getAllItems() {

@@ -7,7 +7,15 @@ const BookmarksScreen = ({ navigation }) => {
 	let [news, setNews] = useState(NewsData.getBookmarks());
 	useEffect(() => {
 		const willFocus = navigation.addListener('focus', () => {
-			setNews(NewsData.getBookmarks());
+			if (NewsData.needReload) {
+				NewsData.reload()
+					.then(() => {
+						setNews(NewsData.getBookmarks());
+					})
+					.catch((error) => console.log(error));
+			} else {
+				setNews(NewsData.getBookmarks());
+			}
 		});
 		return willFocus;
 	}, [navigation]);
