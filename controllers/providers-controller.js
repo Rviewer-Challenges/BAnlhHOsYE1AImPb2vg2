@@ -28,6 +28,10 @@ class ProvidersController {
 				.catch((error) => rej(error));
 		});
 	}
+
+	updateActivate(url, status) {
+		return this.#providers.setActivate(url, status);
+	}
 }
 
 export default ProvidersController;

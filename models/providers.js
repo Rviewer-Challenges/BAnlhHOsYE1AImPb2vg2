@@ -17,7 +17,8 @@ class Providers {
 					link TEXT,
 					author TEXT,
 					description TEXT,
-					image TEXT
+					image TEXT,
+					activated BOOL
 			 );`
 		);
 	}
@@ -26,7 +27,7 @@ class Providers {
 		return new Promise((res, rej) =>
 			this.#db
 				.execute(
-					'INSERT INTO providers(url, title, link, author, description, image) VALUES(?, ?, ?, ?, ?, ?);',
+					'INSERT INTO providers(url, title, link, author, description, image, activated) VALUES(?, ?, ?, ?, ?, ?, 1);',
 					[data.url, data.title, data.link, data.author, data.description, data.image]
 				)
 				.then((result) => res(result.insertId))
@@ -48,6 +49,15 @@ class Providers {
 			this.#db
 				.select('SELECT * FROM providers WHERE id=?', [id])
 				.then((rows) => res(rows.length == 0 ? undefined : rows[0]))
+				.catch((error) => rej(error));
+		});
+	}
+
+	setActivate(url, status) {
+		return new Promise((res, rej) => {
+			this.#db
+				.execute('UPDATE providers SET activated = ? WHERE url = ?', [status, url])
+				.then((result) => res(result))
 				.catch((error) => rej(error));
 		});
 	}
