@@ -1,4 +1,18 @@
+import DB_LOADED from './db-sqlite-loaded';
+import NewsItems from './news-items';
+
 class NewsData {
+	static items;
+	static newsItems;
+	static needReload = false;
+
+	static init() {
+		const newsItems = new NewsItems(DB_LOADED.get());
+		newsItems.downloadRSS();
+
+		NewsData.newsItems = newsItems;
+	}
+
 	static getAll() {
 		return NewsData.items;
 	}
@@ -22,6 +36,15 @@ class NewsData {
 				item.read = isRead;
 			}
 			return item;
+		});
+	}
+
+	static reload() {
+		return new Promise((res, rej) => {
+			NewsData.newsItems
+				.downloadRSS()
+				.then(() => res())
+				.catch((error) => rej(error));
 		});
 	}
 }
