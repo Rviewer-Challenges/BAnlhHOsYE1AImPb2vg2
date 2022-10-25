@@ -43,40 +43,11 @@ class NewsController {
 
 	get(fn = 'get') {
 		return new Promise((res, rej) => {
-			const providers = new Providers(this.#db);
-			let providersData = {};
-			let ns = [];
-
-			console.log(fn);
-
 			this.#news
 				[fn]()
 				.then((news) => {
-					let getProviders = [];
-					news.forEach((n) => {
-						if (!providers[n.providerId]) {
-							providers[n.providerId] = {};
-							getProviders.push(providers.getById(n.providerId));
-						}
-					});
-
-					ns = news;
-					return Promise.all(getProviders);
-				})
-				.then((data) => {
-					data.forEach((n) => {
-						providersData[n.id] = n;
-					});
-
-					ns.map((n) => {
-						n.provider = providersData[n.providerId];
-						delete n.providerId;
-						return n;
-					});
-
-					ns.sort((a, b) => getTimeFromDate(b.pubDate) - getTimeFromDate(a.pubDate));
-
-					res(ns);
+					news.sort((a, b) => getTimeFromDate(b.pubDate) - getTimeFromDate(a.pubDate));
+					res(news);
 				})
 				.catch((error) => rej(error));
 		});
