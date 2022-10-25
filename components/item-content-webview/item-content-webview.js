@@ -7,7 +7,7 @@ const ItemContentWebView = ({
 	thumbnail,
 	title,
 	pubDate,
-	provider,
+	providerTitle,
 	link,
 	source,
 	bookmark,
@@ -234,7 +234,7 @@ const ItemContentWebView = ({
 						<header class="header">
 							<h1>${title}</h1>
 							<span>${pubDate}</span>
-							<span>${provider.title}</span>
+							<span>${providerTitle}</span>
 						</header>
 						${source}
 						<a href="${link}" class="button go-to-btn">

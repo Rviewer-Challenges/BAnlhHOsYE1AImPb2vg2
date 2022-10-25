@@ -77,7 +77,17 @@ const styles = StyleSheet.create({
 	swipeLeft: { backgroundColor: '#17c3b2' },
 });
 
-const ListItem = ({ id, title, thumbnail, pubDate, provider, bookmark, read, link }) => {
+const ListItem = ({
+	id,
+	title,
+	thumbnail,
+	pubDate,
+	providerTitle,
+	providerImage,
+	bookmark,
+	read,
+	link,
+}) => {
 	const navigation = useNavigation();
 
 	const pan = useRef(new Animated.ValueXY()).current;
@@ -129,7 +139,7 @@ const ListItem = ({ id, title, thumbnail, pubDate, provider, bookmark, read, lin
 		backgroundColor = styles.swipeLeft.backgroundColor;
 	}
 
-	thumbnail = thumbnail === '' ? provider.image : thumbnail;
+	thumbnail = thumbnail === '' ? providerImage : thumbnail;
 	pubDate = formatDate(pubDate);
 
 	useEffect(() => {
@@ -192,10 +202,10 @@ const ListItem = ({ id, title, thumbnail, pubDate, provider, bookmark, read, lin
 							title,
 							thumbnail,
 							pubDate,
-							provider,
+							providerTitle,
 							bookmark,
 							read,
-							link
+							link,
 						});
 					}}
 				>
@@ -205,7 +215,7 @@ const ListItem = ({ id, title, thumbnail, pubDate, provider, bookmark, read, lin
 							<View style={styles.row}>
 								<Text style={styles.date}>{pubDate}</Text>
 								<Text style={[styles.footer, styles.footerRight]}>
-									{provider.title}
+									{providerTitle}
 								</Text>
 							</View>
 						</View>
@@ -219,7 +229,7 @@ const ListItem = ({ id, title, thumbnail, pubDate, provider, bookmark, read, lin
 								<Text style={[styles.title, status.isRead ? styles.titleRead : {}]}>
 									{title}
 								</Text>
-								<Text style={styles.footer}>{provider.title}</Text>
+								<Text style={styles.footer}>{providerTitle}</Text>
 							</View>
 						</View>
 					)}

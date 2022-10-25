@@ -5,7 +5,7 @@ import NewsContent from '../../utils/news-content';
 import ItemContentWebView from '../item-content-webview/item-content-webview';
 
 const ItemScreen = ({ route, navigation }) => {
-	const { id, title, thumbnail, pubDate, provider, bookmark, read, link } = route.params;
+	const { id, title, thumbnail, pubDate, providerTitle, bookmark, read, link } = route.params;
 
 	const [contentHTML, setContentHTML] = useState('');
 
@@ -40,7 +40,7 @@ const ItemScreen = ({ route, navigation }) => {
 					title={title}
 					thumbnail={thumbnail}
 					pubDate={pubDate}
-					provider={provider}
+					providerTitle={providerTitle}
 					link={link}
 					source={contentHTML}
 					bookmark={bookmark}
