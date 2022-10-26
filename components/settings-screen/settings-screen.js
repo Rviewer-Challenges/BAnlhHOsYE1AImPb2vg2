@@ -62,9 +62,8 @@ const SettingsScreen = ({ navigation }) => {
 				<ScrollView style={styles.content}>
 					<SettingsThemeOptions
 						styles={styles}
-						onChange={(theme) => {
-							console.log('CHANGE THEME', theme);
-						}}
+						theme={options.theme}
+						onChange={(theme) => settings.set('theme', theme)}
 					/>
 					<SettingsSourcesOptions
 						styles={styles}

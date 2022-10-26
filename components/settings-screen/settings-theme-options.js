@@ -3,8 +3,12 @@ import { View, Text } from 'react-native';
 import SettingsIconBtn from './settings-icon-btn';
 import { Path } from 'react-native-svg';
 
-const SettingsThemeOptions = ({ styles, onChange }) => {
-	let [options, setData] = useState({ dark: false, system: true, light: false });
+const SettingsThemeOptions = ({ styles, theme, onChange }) => {
+	let [options, setData] = useState({
+		dark: theme == 'dark',
+		automatic: theme == 'automatic',
+		light: theme == 'light',
+	});
 	const selected = (id) => {
 		if (!options[id]) {
 			options = { ...options };
@@ -34,7 +38,7 @@ const SettingsThemeOptions = ({ styles, onChange }) => {
 					onPress={(id) => selected(id)}
 				/>
 				<SettingsIconBtn
-					id="system"
+					id="automatic"
 					style={styles.controlThemeIconBtn}
 					icon={
 						<>
@@ -46,7 +50,7 @@ const SettingsThemeOptions = ({ styles, onChange }) => {
 						</>
 					}
 					text="Sistema"
-					activated={options.system}
+					activated={options.automatic}
 					onPress={(id) => selected(id)}
 				/>
 				<SettingsIconBtn
