@@ -1,4 +1,11 @@
-import { View, ScrollView, StyleSheet, Text, useColorScheme } from 'react-native';
+import {
+	View,
+	ScrollView,
+	StyleSheet,
+	Text,
+	useColorScheme,
+	NativeEventEmitter,
+} from 'react-native';
 import Constants from 'expo-constants';
 import SettingsThemeOptions from './settings-theme-options';
 import SettingsSourcesOptions from './settings-sources-options';
@@ -83,10 +90,14 @@ const SettingsScreen = ({ navigation }) => {
 						styles={themes}
 						theme={options.theme}
 						onChange={(theme) => {
+							const eventEmitter = new NativeEventEmitter();
+
 							settings.set('theme', theme);
 							if (theme == 'automatic') theme = systemTheme;
 							Themes.theme = theme;
 							setTheme(theme);
+
+							eventEmitter.emit('CHANGE_THEME');
 						}}
 					/>
 					<SettingsSourcesOptions
