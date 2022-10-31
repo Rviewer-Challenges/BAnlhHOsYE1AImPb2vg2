@@ -4,7 +4,7 @@ import SettingsCheckbox from './settings-checkbox';
 const SettingsSourcesOptions = ({ styles, sources, onChange }) => {
 	return (
 		<View>
-			<Text style={styles.sectionTitle}>Fuentes</Text>
+			<Text style={styles.get('sectionTitle')}>Fuentes</Text>
 			<View
 				style={{
 					width: '90%',

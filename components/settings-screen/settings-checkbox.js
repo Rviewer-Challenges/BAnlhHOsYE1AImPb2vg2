@@ -1,6 +1,47 @@
 import { useRef, useState } from 'react';
-import { View, Text, TouchableWithoutFeedback, Animated } from 'react-native';
+import { View, Text, TouchableWithoutFeedback, Animated, StyleSheet } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import Themes from '../../utils/themes';
+
+const styles = StyleSheet.create({
+	content: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		paddingTop: 2,
+		paddingBottom: 2,
+	},
+	box: {
+		height: 20,
+		width: 20,
+		borderRadius: 2,
+		borderWidth: 1,
+		borderColor: '#000',
+	},
+	icon: {
+		position: 'absolute',
+		color: '#4361ee',
+	},
+	text: {
+		marginLeft: 5,
+		fontSize: 16,
+		color: '#000',
+	},
+});
+
+const stylesDark = StyleSheet.create({
+	box: {
+		borderColor: '#fff',
+	},
+	icon: {
+		color: '#94A5F1',
+	},
+	text: {
+		color: '#fff',
+	},
+});
+
+const themes = new Themes();
+themes.styles(styles, stylesDark);
 
 const SettingsCheckbox = ({ value, text, activated, onChange }) => {
 	const AnimatedSvg = Animated.createAnimatedComponent(Svg);
@@ -25,33 +66,15 @@ const SettingsCheckbox = ({ value, text, activated, onChange }) => {
 				onChange(value, isActivated);
 			}}
 		>
-			<View
-				style={{
-					flexDirection: 'row',
-					alignItems: 'center',
-					paddingTop: 2,
-					paddingBottom: 2,
-				}}
-			>
+			<View style={styles.content}>
 				<View>
-					<Svg
-						height="20"
-						width="20"
-						xmlns="http://www.w3.org/2000/svg"
-						viewBox="0 0 18 18"
-						style={{ color: '#000' }}
-					>
-						<Path
-							d="M16 0H2C.897 0 0 .897 0 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V2c0-1.103-.897-2-2-2zM2 16V2h14l.002 14z"
-							fill="currentColor"
-						/>
-					</Svg>
+					<View style={themes.get('box')}></View>
 					<AnimatedSvg
 						height="20"
 						width="20"
 						xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 18 18"
-						style={{ position: 'absolute', opacity: opacityAnim, color: '#4361ee' }}
+						style={[themes.get('icon'), { opacity: opacityAnim }]}
 					>
 						<Path
 							d="M7.933 10.519L5.707 8.293 4.293 9.707l3.774 3.774 5.702-6.84-1.538-1.282z"
@@ -59,7 +82,7 @@ const SettingsCheckbox = ({ value, text, activated, onChange }) => {
 						/>
 					</AnimatedSvg>
 				</View>
-				<Text style={{ marginLeft: 5, fontSize: 16 }}>{text}</Text>
+				<Text style={themes.get('text')}>{text}</Text>
 			</View>
 		</TouchableWithoutFeedback>
 	);

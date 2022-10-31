@@ -1,4 +1,4 @@
-import { View, ScrollView, StyleSheet, Text } from 'react-native';
+import { View, ScrollView, StyleSheet, Text, useColorScheme } from 'react-native';
 import Constants from 'expo-constants';
 import SettingsThemeOptions from './settings-theme-options';
 import SettingsSourcesOptions from './settings-sources-options';
@@ -7,11 +7,13 @@ import Settings from '../../utils/settings';
 import ProvidersController from '../../controllers/providers-controller';
 import DB_LOADED from '../../utils/db-sqlite-loaded';
 import NewsData from '../../utils/news-data';
+import Themes from '../../utils/themes';
 
 const styles = StyleSheet.create({
 	container: {
 		width: '100%',
 		height: '100%',
+		backgroundColor: '#f2f2f2',
 	},
 	content: { paddingRight: 10, paddingLeft: 10 },
 	header: {
@@ -45,10 +47,27 @@ const styles = StyleSheet.create({
 	},
 });
 
+const stylesDark = StyleSheet.create({
+	container: {
+		backgroundColor: '#2c2c2c',
+	},
+	sectionTitle: {
+		color: '#fff',
+	},
+	controlTitle: {
+		color: '#fff',
+	},
+});
+
+let themes = new Themes();
+themes.styles(styles, stylesDark);
+
 const SettingsScreen = ({ navigation }) => {
 	const settings = new Settings();
 	const providersController = new ProvidersController(DB_LOADED.get());
+	const systemTheme = useColorScheme();
 	let [options, setOptions] = useState({});
+	let [theme, setTheme] = useState({});
 
 	settings
 		.get()
@@ -56,17 +75,22 @@ const SettingsScreen = ({ navigation }) => {
 		.catch((error) => console.log(error));
 
 	return (
-		<View style={styles.container}>
+		<View style={themes.get('container')}>
 			<Text style={styles.header}>Configuración</Text>
 			{options.theme != undefined ? (
 				<ScrollView style={styles.content}>
 					<SettingsThemeOptions
-						styles={styles}
+						styles={themes}
 						theme={options.theme}
-						onChange={(theme) => settings.set('theme', theme)}
+						onChange={(theme) => {
+							settings.set('theme', theme);
+							if (theme == 'automatic') theme = systemTheme;
+							Themes.theme = theme;
+							setTheme(theme);
+						}}
 					/>
 					<SettingsSourcesOptions
-						styles={styles}
+						styles={themes}
 						sources={options.sources}
 						onChange={(value, isActivated) => {
 							options.sources = options.sources.map((source) => {

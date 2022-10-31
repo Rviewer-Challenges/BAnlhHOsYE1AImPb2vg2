@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { View, Text, TouchableWithoutFeedback, StyleSheet, Animated } from 'react-native';
 import Svg from 'react-native-svg';
+import Themes from '../../utils/themes';
 
 const styles = StyleSheet.create({
 	content: {
@@ -22,6 +23,21 @@ const styles = StyleSheet.create({
 		lineHeight: 14,
 	},
 });
+
+const stylesDark = StyleSheet.create({
+	content: {
+		borderColor: '#000',
+	},
+	icon: {
+		color: '#fff',
+	},
+	text: {
+		color: '#fff',
+	},
+});
+
+const themes = new Themes();
+themes.styles(styles, stylesDark);
 
 const SettingsIconBtn = ({ id = '', icon, text, style, activated = false, onPress }) => {
 	const AnimatedSvg = Animated.createAnimatedComponent(Svg);
@@ -63,11 +79,11 @@ const SettingsIconBtn = ({ id = '', icon, text, style, activated = false, onPres
 				onPress(id);
 			}}
 		>
-			<View style={[styles.content, activated ? styles.activated : {}, style]}>
+			<View style={[themes.get('content'), style]}>
 				<Animated.View
 					style={{
 						position: 'absolute',
-						backgroundColor: '#fff',
+						backgroundColor: Themes.theme == 'light' ? '#fff' : '#000',
 						top: 0,
 						bottom: 0,
 						left: 0,
@@ -76,14 +92,14 @@ const SettingsIconBtn = ({ id = '', icon, text, style, activated = false, onPres
 					}}
 				></Animated.View>
 				<AnimatedSvg
-					style={[styles.icon, { transform: [{ scale: transformScale }] }]}
+					style={[themes.get('icon'), { transform: [{ scale: transformScale }] }]}
 					height="30"
 					width="30"
 					viewBox="0 0 20 20"
 				>
 					{icon}
 				</AnimatedSvg>
-				<Text style={styles.text}>{text}</Text>
+				<Text style={themes.get('text')}>{text}</Text>
 			</View>
 		</TouchableWithoutFeedback>
 	);
