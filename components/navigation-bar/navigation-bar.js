@@ -94,6 +94,7 @@ const NavigationBar = ({ activeRefresh = false }) => {
 
 		return () => {
 			navigation.removeListener('state');
+			eventEmitter.remove();
 		};
 	}, []);
 
