@@ -1,9 +1,10 @@
-import { View, StyleSheet, Animated, Easing, Text } from 'react-native';
+import { View, StyleSheet, DeviceEventEmitter, NativeEventEmitter } from 'react-native';
 import { useRef, useState, useEffect } from 'react';
 import { Path } from 'react-native-svg';
 import NavigationBarBtn from './navigation-bar-btn';
 import { useNavigation } from '@react-navigation/native';
 import NavigationBottomBar from './navigation-bottom-bar';
+import Themes from '../../utils/themes';
 
 const styles = StyleSheet.create({
 	content: {
@@ -11,6 +12,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'center',
 		alignContent: 'center',
+		backgroundColor: '#fff',
 	},
 	bottomBar: {
 		position: 'absolute',
@@ -18,7 +20,6 @@ const styles = StyleSheet.create({
 		width: 50,
 		bottom: 0,
 		left: 0,
-		backgroundColor: '#f00',
 		borderRadius: 3,
 	},
 	buttonColors: {
@@ -31,8 +32,26 @@ const styles = StyleSheet.create({
 	},
 });
 
+const stylesDark = StyleSheet.create({
+	content: {
+		backgroundColor: '#171717',
+	},
+	buttonColors: {
+		deactivated: '#727272',
+		activated: '#727272',
+	},
+});
+
+const themes = new Themes();
+themes.styles(styles, stylesDark);
+
 const NavigationBar = ({ activeRefresh = false }) => {
 	const navigation = useNavigation();
+	const [theme, changeTheme] = useState({});
+	const buttonColors =
+		Themes.theme == 'dark'
+			? { ...styles.buttonColors, ...stylesDark.buttonColors }
+			: styles.buttonColors;
 
 	let [state, setState] = useState({
 		activated: 1,
@@ -63,9 +82,15 @@ const NavigationBar = ({ activeRefresh = false }) => {
 	};
 
 	useEffect(() => {
+		const eventEmitter = new NativeEventEmitter();
+
 		navigation.addListener('state', (event) => {
 			navigationState(event);
 		});
+
+		eventEmitter.listener = DeviceEventEmitter.addListener('CHANGE_THEME', () =>
+			changeTheme(Themes.theme)
+		);
 
 		return () => {
 			navigation.removeListener('state');
@@ -73,7 +98,7 @@ const NavigationBar = ({ activeRefresh = false }) => {
 	}, []);
 
 	return (
-		<View style={styles.content}>
+		<View style={themes.get('content')}>
 			<NavigationBarBtn
 				index="0"
 				onPress={(event, left) => {
@@ -106,10 +131,7 @@ const NavigationBar = ({ activeRefresh = false }) => {
 					navigation.navigate('Home');
 				}}
 				activated={state.activated}
-				colors={{
-					...styles.buttonColors,
-					activated: styles.buttonColors.home,
-				}}
+				colors={{ ...buttonColors, activated: styles.buttonColors.home }}
 			>
 				<Path
 					fill="currentColor"
@@ -131,7 +153,7 @@ const NavigationBar = ({ activeRefresh = false }) => {
 				}}
 				activated={state.activated}
 				colors={{
-					...styles.buttonColors,
+					...buttonColors,
 					activated: styles.buttonColors.bookmarks,
 				}}
 			>
@@ -159,7 +181,7 @@ const NavigationBar = ({ activeRefresh = false }) => {
 				}}
 				activated={state.activated}
 				colors={{
-					...styles.buttonColors,
+					...buttonColors,
 					activated: styles.buttonColors.settings,
 				}}
 			>
