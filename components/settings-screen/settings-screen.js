@@ -59,10 +59,10 @@ const stylesDark = StyleSheet.create({
 		backgroundColor: '#2c2c2c',
 	},
 	sectionTitle: {
-		color: '#fff',
+		color: '#ececec',
 	},
 	controlTitle: {
-		color: '#fff',
+		color: '#ececec',
 	},
 });
 

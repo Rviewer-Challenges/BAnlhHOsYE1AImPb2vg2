@@ -29,10 +29,10 @@ const stylesDark = StyleSheet.create({
 		borderColor: '#000',
 	},
 	icon: {
-		color: '#fff',
+		color: '#ececec',
 	},
 	text: {
-		color: '#fff',
+		color: '#ececec',
 	},
 });
 
@@ -83,7 +83,7 @@ const SettingsIconBtn = ({ id = '', icon, text, style, activated = false, onPres
 				<Animated.View
 					style={{
 						position: 'absolute',
-						backgroundColor: Themes.theme == 'light' ? '#fff' : '#000',
+						backgroundColor: Themes.theme == 'light' ? '#ececec' : '#000',
 						top: 0,
 						bottom: 0,
 						left: 0,

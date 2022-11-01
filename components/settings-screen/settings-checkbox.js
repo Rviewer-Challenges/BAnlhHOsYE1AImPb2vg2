@@ -30,13 +30,13 @@ const styles = StyleSheet.create({
 
 const stylesDark = StyleSheet.create({
 	box: {
-		borderColor: '#fff',
+		borderColor: '#ececec',
 	},
 	icon: {
 		color: '#94A5F1',
 	},
 	text: {
-		color: '#fff',
+		color: '#ececec',
 	},
 });
 
