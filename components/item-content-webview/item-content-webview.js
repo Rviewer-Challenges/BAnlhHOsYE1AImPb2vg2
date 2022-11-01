@@ -278,17 +278,6 @@ const ItemContentWebView = ({
 							<span>${pubDate}</span>
 							<span>${providerTitle}</span>
 						</header>
-						<p>Prueba</p>
-						<table>
-							<tr>
-								<th>Titulo 1</th>
-								<th>Titulo 2</th>
-							</tr>
-							<tr>
-								<td>Texto 1</td>
-								<td>Texto 2</td>
-							</tr>
-						</table>
 						${source.replace(/<blockquote/g, '<blockquote data-theme="' + Themes.theme + '"')}
 						<a href="${link}" class="button go-to-btn">
 							<svg height="18" width="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18"><path d="M10 0l3.293 3.293-7 7 1.414 1.414 7-7L18 8V0z"/><path d="M16 16H2V2h7L7 0H2C.897 0 0 .897 0 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2v-5l-2-2z"/></svg>
