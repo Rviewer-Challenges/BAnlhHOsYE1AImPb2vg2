@@ -39,6 +39,7 @@ const stylesDark = StyleSheet.create({
 	buttonColors: {
 		deactivated: '#727272',
 		activated: '#727272',
+		home: '#005BAF',
 	},
 });
 
@@ -47,6 +48,7 @@ themes.styles(styles, stylesDark);
 
 const NavigationBar = ({ activeRefresh = false }) => {
 	const navigation = useNavigation();
+	const eventEmitter = new NativeEventEmitter();
 	const [theme, changeTheme] = useState({});
 	const buttonColors =
 		Themes.theme == 'dark'
@@ -82,8 +84,6 @@ const NavigationBar = ({ activeRefresh = false }) => {
 	};
 
 	useEffect(() => {
-		const eventEmitter = new NativeEventEmitter();
-
 		navigation.addListener('state', (event) => {
 			navigationState(event);
 		});
@@ -94,7 +94,6 @@ const NavigationBar = ({ activeRefresh = false }) => {
 
 		return () => {
 			navigation.removeListener('state');
-			eventEmitter.remove();
 		};
 	}, []);
 
@@ -108,7 +107,7 @@ const NavigationBar = ({ activeRefresh = false }) => {
 					navigation.goBack();
 				}}
 				enabled={state.activeBack}
-				colors={styles.buttonColors}
+				colors={buttonColors}
 			>
 				<Path
 					fill="currentColor"
@@ -120,19 +119,19 @@ const NavigationBar = ({ activeRefresh = false }) => {
 				onLayout={(event, left) => {
 					setState({
 						...state,
-						bottomBar: { position: left, finishColor: styles.buttonColors.home },
+						bottomBar: { position: left, finishColor: buttonColors.home },
 					});
 				}}
 				onPress={(event, left) => {
 					console.log('HOME');
 					changeState({
 						activated: 1,
-						bottomBar: { position: left, finishColor: styles.buttonColors.home },
+						bottomBar: { position: left, finishColor: buttonColors.home },
 					});
 					navigation.navigate('Home');
 				}}
 				activated={state.activated}
-				colors={{ ...buttonColors, activated: styles.buttonColors.home }}
+				colors={{ ...buttonColors, activated: buttonColors.home }}
 			>
 				<Path
 					fill="currentColor"
@@ -147,7 +146,7 @@ const NavigationBar = ({ activeRefresh = false }) => {
 						activated: 2,
 						bottomBar: {
 							position: left,
-							finishColor: styles.buttonColors.bookmarks,
+							finishColor: buttonColors.bookmarks,
 						},
 					});
 					navigation.navigate('Bookmarks');
@@ -155,7 +154,7 @@ const NavigationBar = ({ activeRefresh = false }) => {
 				activated={state.activated}
 				colors={{
 					...buttonColors,
-					activated: styles.buttonColors.bookmarks,
+					activated: buttonColors.bookmarks,
 				}}
 			>
 				<Path
@@ -175,7 +174,7 @@ const NavigationBar = ({ activeRefresh = false }) => {
 						activated: 3,
 						bottomBar: {
 							position: left,
-							finishColor: styles.buttonColors.settings,
+							finishColor: buttonColors.settings,
 						},
 					});
 					navigation.navigate('Settings');
@@ -183,7 +182,7 @@ const NavigationBar = ({ activeRefresh = false }) => {
 				activated={state.activated}
 				colors={{
 					...buttonColors,
-					activated: styles.buttonColors.settings,
+					activated: buttonColors.settings,
 				}}
 			>
 				<Path
