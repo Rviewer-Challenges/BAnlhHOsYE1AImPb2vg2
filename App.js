@@ -5,12 +5,13 @@ import NavigationBar from './components/navigation-bar/navigation-bar';
 import HomeScreen from './components/home-screen/home-screen';
 import BookmarksScreen from './components/bookmarks-screen/bookmarks-screen';
 import SettingsScreen from './components/settings-screen/settings-screen';
-import { Text, View } from 'react-native';
+import { Text, View, useColorScheme } from 'react-native';
 import NewsItems from './utils/news-items';
 import NewsData from './utils/news-data';
 import ItemScreen from './components/item-screen/item-screen';
 import Settings from './utils/settings';
 import DB_LOADED from './utils/db-sqlite-loaded';
+import Themes from './utils/themes';
 
 const horizontalAnimation = {
 	cardStyleInterpolator: ({ current, layouts }) => {
@@ -33,14 +34,21 @@ const Stack = createStackNavigator();
 
 // LOAD SETTINGS
 const settings = new Settings();
-settings.get();
+settings.get().then((options) => {
+	Themes.theme = options.theme;
+});
 
 //LOAD NEWS
 DB_LOADED.init();
 NewsData.init();
 
 export default function App() {
+	const systemTheme = useColorScheme();
 	let [newsWasLoaded, setNewsWasLoaded] = useState(false);
+
+	if (Themes.theme == 'automatic') {
+		Themes.theme = systemTheme;
+	}
 
 	useEffect(() => {
 		NewsData.newsItems
