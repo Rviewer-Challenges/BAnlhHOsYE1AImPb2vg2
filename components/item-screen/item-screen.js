@@ -3,6 +3,7 @@ import { View, Easing, Animated } from 'react-native';
 import NewsData from '../../utils/news-data';
 import NewsContent from '../../utils/news-content';
 import ItemContentWebView from '../item-content-webview/item-content-webview';
+import Themes from '../../utils/themes';
 
 const ItemScreen = ({ route, navigation }) => {
 	const { id, title, thumbnail, pubDate, providerTitle, bookmark, read, link } = route.params;
@@ -31,6 +32,7 @@ const ItemScreen = ({ route, navigation }) => {
 		<View
 			style={{
 				height: '100%',
+				backgroundColor: Themes.theme == 'dark' ? '#2c2c2c' : '#f2f2f2',
 			}}
 			onLayout={(event) => NewsData.newsItems.updateRead(id, true)}
 		>

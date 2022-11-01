@@ -1,6 +1,7 @@
 import { Linking } from 'react-native';
 import WebView from 'react-native-webview';
 import NewsData from '../../utils/news-data';
+import Themes from '../../utils/themes';
 
 const ItemContentWebView = ({
 	id,
@@ -49,9 +50,51 @@ const ItemContentWebView = ({
 						/* https://necolas.github.io/normalize.css/ */
 						html {line-height: 1.15;-webkit-text-size-adjust: 100%;}body {margin: 0}main {display: block;}hr {box-sizing: content-box;height: 0;overflow: visible;}pre {font-family: monospace, monospace;font-size: 1rem;}a {background-color: transparent;}abbr[title] {border-bottom: none;text-decoration: underline;text-decoration: underline dotted;}b, strong {font-weight: bolder;}code, kbd, samp {font-family: monospace, monospace;font-size: 1rem;}small {font-size: 80%;}sub, sup {font-size: 75%;line-height: 0;position: relative;vertical-align: baseline;}sub {bottom: -0.25rem;}sup {top: -0.5rem;}img {border-style: none;}button, input, optgroup, select, textarea {font-family: inherit;font-size: 100%;line-height: 1.15;margin: 0;}button, input {overflow: visible;}button, select {text-transform: none;}button, [type="button"], [type="reset"], [type="submit"] {-webkit-appearance: button;}button::-moz-focus-inner, [type="button"]::-moz-focus-inner, [type="reset"]::-moz-focus-inner, [type="submit"]::-moz-focus-inner {border-style: none;padding: 0;}button:-moz-focusring, [type="button"]:-moz-focusring, [type="reset"]:-moz-focusring, [type="submit"]:-moz-focusring {outline: 1px dotted ButtonText;}fieldset {padding: 0.35em 0.75em 0.625rem;}legend {box-sizing: border-box;color: inherit;display: table;max-width: 100%;padding: 0;white-space: normal;}progress {vertical-align: baseline;}textarea {overflow: auto;}[type="checkbox"], [type="radio"] {box-sizing: border-box;padding: 0;}[type="number"]::-webkit-inner-spin-button, [type="number"]::-webkit-outer-spin-button {height: auto;}[type="search"] {-webkit-appearance: textfield;outline-offset: -2px;}[type="search"]::-webkit-search-decoration {-webkit-appearance: none;}::-webkit-file-upload-button {-webkit-appearance: button;font: inherit;}details {display: block;}summary {display: list-item;}template {display: none;}[hidden] {display: none;}
 						/* CUSTOM */
+						:root{
+							${
+								Themes.theme == 'dark'
+									? `
+							--body-color: #ececec;
+							--body-background-color: #2c2c2c;
+							--blockquote-border-color: #94A5F1;
+							--a-color: #94A5F1;
+							--a-hover-color: #219ebc;
+							--a-active-color: #4361ee;
+							--td-border-color: #5D6290;
+							--th-background: #2A2725;
+							--cover-button-fill: #03071e;
+							--cover-button-background: rgba( 255, 255, 255, 0.5 );
+							--cover-button-selected-fill: #BA9458;
+							--cover-button-selected-background: rgba(61, 45, 0, 0.5);
+							--go-to-btn-background: #354f52;
+							--go-to-btn-color: #dde5b6;
+							--go-to-btn-focus-color: #dde5b6;
+							--go-to-btn-fill: #dde5b6;
+							`
+									: `
+							--body-color: #03071e;
+							--body-background-color: #f2f2f2;
+							--blockquote-border-color: #bbd0ff;
+							--a-color: #4361ee;
+							--a-hover-color: #219ebc;
+							--a-active-color: #023047;
+							--td-border-color: #2b2d42;
+							--th-background: #f7ede2;
+							--cover-button-fill: #03071e;
+							--cover-button-background: rgba( 255, 255, 255, 0.5 );
+							--cover-button-selected-fill: #3D2D00;
+							--cover-button-selected-background: rgba( 255, 214, 10, 0.5 );
+							--go-to-btn-background: #dde5b6;
+							--go-to-btn-color: #354f52;
+							--go-to-btn-focus-color: #354f52;
+							--go-to-btn-fill: #354f52;
+							`
+							}
+						}
 						body{
 							font-size: 16px;
-							color: #03071e;
+							color: var(--body-color);
+							background-color: var(--body-background-color);
 						}
 						h1{
 							font-size: 1.5rem;
@@ -76,7 +119,7 @@ const ItemContentWebView = ({
 							font-size: 1rem;
 						}
 						blockquote{
-							border-left: 1em solid #bbd0ff;
+							border-left: 1em solid var(--blockquote-border-color);
 							padding-left: 1rem;
 							margin: 1rem;
 							font-style: italic;
@@ -95,14 +138,14 @@ const ItemContentWebView = ({
 							margin: 0;
 						}
 						a{
-							color: #4361ee;
+							color: var(--a-color);
 							text-decoration: none;
 						}
 						a:hover, a:focus{
-							color: #219ebc;
+							color: var(--a-hover-color);
 						}
 						a:active, a:visited{
-							color: #023047
+							color: var(--a-active-color);
 						}
 						ul{
 							padding-inline-start: 1.25rem;
@@ -115,12 +158,11 @@ const ItemContentWebView = ({
 							border-collapse: collapse;
 						}
 						td, th{
-							border: 1px solid #2b2d42;
+							border: 1px solid var(--td-border-color);
 							padding: 0.25rem;
 						}
 						th{
-							background: #d9d9d9;
-							background: #f7ede2;
+							background: var(--th-background);
 						}
 						table p{
 							margin: 0;
@@ -157,15 +199,15 @@ const ItemContentWebView = ({
 						.cover .button{
 							-webkit-appearance: none;
 							margin: auto 0.6rem 0.6rem auto;
-							fill: #03071e;
+							fill: var(--cover-button-fill);
 							border: none;
-							background: rgba( 255, 255, 255, 0.5 );
+							background: var(--cover-button-background);
 							backdrop-filter: blur( 4px );
 							-webkit-backdrop-filter: blur( 4px );
 						}
 						.cover .button.selected{
-							fill: #3D2D00;
-							background: rgba( 255, 214, 10, 0.5 );
+							fill: var(--cover-button-selected-fill);
+							background: var(--cover-button-selected-background);
 						}
 						.content{
 							padding: 0 0.6rem 3.4rem;
@@ -185,19 +227,19 @@ const ItemContentWebView = ({
 						}
 						.go-to-btn{
 							position: fixed;
-							background-color: #dde5b6;
+							background-color: var(--go-to-btn-background);
 							bottom: 0.6rem;
 							right: 0.6rem;
 							left: auto;
 							margin: auto;
 							right: 0.6rem;
-							color: #354f52;
+							color: var(--go-to-btn-color);
 						}
 						.go-to-btn:focus, .go-to-btn:active{
-							color: #354f52;
+							color: var(--go-to-btn-focus-color);
 						}
 						.go-to-btn svg{
-							fill: #354f52;
+							fill: var(--go-to-btn-fill);
 						}
 						.go-to-btn span{
 							display: block;
@@ -236,7 +278,18 @@ const ItemContentWebView = ({
 							<span>${pubDate}</span>
 							<span>${providerTitle}</span>
 						</header>
-						${source}
+						<p>Prueba</p>
+						<table>
+							<tr>
+								<th>Titulo 1</th>
+								<th>Titulo 2</th>
+							</tr>
+							<tr>
+								<td>Texto 1</td>
+								<td>Texto 2</td>
+							</tr>
+						</table>
+						${source.replace(/<blockquote/g, '<blockquote data-theme="' + Themes.theme + '"')}
 						<a href="${link}" class="button go-to-btn">
 							<svg height="18" width="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18"><path d="M10 0l3.293 3.293-7 7 1.414 1.414 7-7L18 8V0z"/><path d="M16 16H2V2h7L7 0H2C.897 0 0 .897 0 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2v-5l-2-2z"/></svg>
 							<span>Visitar sitio</span>
