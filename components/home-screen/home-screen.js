@@ -4,6 +4,7 @@ import NewsData from '../../utils/news-data';
 import { useEffect, useState } from 'react';
 import { DeviceEventEmitter, NativeEventEmitter } from 'react-native';
 import Themes from '../../utils/themes';
+import { StatusBar } from 'expo-status-bar';
 
 const HomeScreen = ({ navigation }) => {
 	const [theme, changeTheme] = useState({});
@@ -31,18 +32,17 @@ const HomeScreen = ({ navigation }) => {
 				changeTheme(Themes.theme);
 			}, 501)
 		);
-
-		return () => {
-			eventEmitter.remove();
-		};
 	}, []);
 
 	return (
-		<CustomFlatListSwipe
-			data={news}
-			renderItem={({ item }) => <ListItem {...item} />}
-			keyExtractor={(item) => item.id}
-		/>
+		<>
+			<CustomFlatListSwipe
+				data={news}
+				renderItem={({ item }) => <ListItem {...item} />}
+				keyExtractor={(item) => item.id}
+			/>
+			<StatusBar style={Themes.theme == 'dark' ? 'light' : 'dark'} animated={false} />
+		</>
 	);
 };
 

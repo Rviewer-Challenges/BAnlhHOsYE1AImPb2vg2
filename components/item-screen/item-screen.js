@@ -4,6 +4,7 @@ import NewsData from '../../utils/news-data';
 import NewsContent from '../../utils/news-content';
 import ItemContentWebView from '../item-content-webview/item-content-webview';
 import Themes from '../../utils/themes';
+import { StatusBar } from 'expo-status-bar';
 
 const ItemScreen = ({ route, navigation }) => {
 	const { id, title, thumbnail, pubDate, providerTitle, bookmark, read, link } = route.params;
@@ -49,6 +50,11 @@ const ItemScreen = ({ route, navigation }) => {
 					onReady={() => opacityIn()}
 				/>
 			</Animated.View>
+			<StatusBar
+				style={Themes.theme == 'dark' ? 'light' : 'dark'}
+				animated={false}
+				backgroundColor={Themes.theme == 'dark' ? 'rgba(44, 44, 44, 0.5)' : 'rgba(242, 242, 242, 0.5)'}
+			/>
 		</View>
 	);
 };

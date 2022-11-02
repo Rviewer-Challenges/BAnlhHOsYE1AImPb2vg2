@@ -15,6 +15,7 @@ import ProvidersController from '../../controllers/providers-controller';
 import DB_LOADED from '../../utils/db-sqlite-loaded';
 import NewsData from '../../utils/news-data';
 import Themes from '../../utils/themes';
+import { StatusBar } from 'expo-status-bar';
 
 const styles = StyleSheet.create({
 	container: {
@@ -121,6 +122,7 @@ const SettingsScreen = ({ navigation }) => {
 			) : (
 				<Text>Cargando...</Text>
 			)}
+			<StatusBar style="light" animated={false} />
 		</View>
 	);
 };
