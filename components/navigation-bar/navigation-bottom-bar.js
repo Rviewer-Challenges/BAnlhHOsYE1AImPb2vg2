@@ -20,7 +20,7 @@ const NavigationBottomBar = ({ position, finishColor }) => {
 	const opacityOutAnim = useRef(new Animated.Value(1)).current;
 
 	const moveBottomBar = (to) => {
-		if (prevPosition.current < 0) {
+		if (prevPosition.current < 0 || to < 0) {
 			translateXAnim.setValue(position);
 		} else {
 			Animated.timing(translateXAnim, {

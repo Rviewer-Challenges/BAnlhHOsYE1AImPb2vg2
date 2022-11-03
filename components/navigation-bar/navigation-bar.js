@@ -57,26 +57,41 @@ const NavigationBar = ({ activeRefresh = false }) => {
 
 	let [state, setState] = useState({
 		activated: 1,
-		bottomBar: { position: -100, finishColor: 'transparent' },
+		bottomBarColor: 'transparent',
 		activeBack: false,
+		buttonsPositions: [-100, -100, -100, -100, -100],
 	});
-	let prevState = useRef(JSON.stringify(state));
-
-	const changeState = (_state) => {
-		_state = { ...state, activeBack: false, ..._state };
-		prevState.current = JSON.stringify(_state);
-		setState(_state);
-	};
 
 	const navigationState = (event) => {
 		const routes = event?.data?.state?.routes;
 		if (routes) {
 			const lastRouteName = routes[routes.length - 1].name;
-			if (lastRouteName == 'Item') {
+			if (lastRouteName == 'Home') {
+				setState({
+					...state,
+					activated: 1,
+					bottomBarColor: buttonColors.home,
+					activeBack: false,
+				});
+			} else if (lastRouteName == 'Bookmarks') {
+				setState({
+					...state,
+					activated: 2,
+					bottomBarColor: buttonColors.bookmarks,
+					activeBack: false,
+				});
+			} else if (lastRouteName == 'Settings') {
+				setState({
+					...state,
+					activated: 3,
+					bottomBar: buttonColors.settings,
+					activeBack: false,
+				});
+			} else if (lastRouteName == 'Item') {
 				setState({
 					...state,
 					activated: 0,
-					bottomBar: { position: -100, finishColor: 'transparent' },
+					bottomBar: 'transparent',
 					activeBack: true,
 				});
 			}
@@ -103,7 +118,6 @@ const NavigationBar = ({ activeRefresh = false }) => {
 				index="0"
 				onPress={(event, left) => {
 					console.log('BACK');
-					setState(JSON.parse(prevState.current));
 					navigation.goBack();
 				}}
 				enabled={state.activeBack}
@@ -116,18 +130,24 @@ const NavigationBar = ({ activeRefresh = false }) => {
 			</NavigationBarBtn>
 			<NavigationBarBtn
 				index="1"
-				onLayout={(event, left) => {
-					setState({
+				onLayout={(event, left, ref) => {
+					console.log('CARGANDO HOME');
+					let _state = {
 						...state,
-						bottomBar: { position: left, finishColor: buttonColors.home },
-					});
+						bottomBarColor: buttonColors.home,
+					};
+					_state.buttonsPositions[1] = left;
+					setState(_state);
 				}}
 				onPress={(event, left) => {
 					console.log('HOME');
-					changeState({
+					let _state = {
+						...state,
 						activated: 1,
-						bottomBar: { position: left, finishColor: buttonColors.home },
-					});
+						bottomBarColor: buttonColors.home,
+					};
+					_state.buttonsPositions[1] = left;
+					setState(_state);
 					navigation.navigate('Home');
 				}}
 				activated={state.activated}
@@ -142,13 +162,13 @@ const NavigationBar = ({ activeRefresh = false }) => {
 				index="2"
 				onPress={(event, left) => {
 					console.log('BOOKMARK');
-					changeState({
+					let _state = {
+						...state,
 						activated: 2,
-						bottomBar: {
-							position: left,
-							finishColor: buttonColors.bookmarks,
-						},
-					});
+						bottomBarColor: buttonColors.bookmarks,
+					};
+					_state.buttonsPositions[2] = left;
+					setState(_state);
 					navigation.navigate('Bookmarks');
 				}}
 				activated={state.activated}
@@ -170,13 +190,13 @@ const NavigationBar = ({ activeRefresh = false }) => {
 				index="3"
 				onPress={(event, left) => {
 					console.log('CONFIG');
-					changeState({
+					let _state = {
+						...state,
 						activated: 3,
-						bottomBar: {
-							position: left,
-							finishColor: buttonColors.settings,
-						},
-					});
+						bottomBarColor: buttonColors.settings,
+					};
+					_state.buttonsPositions[3] = left;
+					setState(_state);
 					navigation.navigate('Settings');
 				}}
 				activated={state.activated}
@@ -208,8 +228,8 @@ const NavigationBar = ({ activeRefresh = false }) => {
 				/>
 			</NavigationBarBtn>
 			<NavigationBottomBar
-				position={state.bottomBar.position}
-				finishColor={state.bottomBar.finishColor}
+				position={state.buttonsPositions[state.activated]}
+				finishColor={state.bottomBarColor}
 			/>
 		</View>
 	);
