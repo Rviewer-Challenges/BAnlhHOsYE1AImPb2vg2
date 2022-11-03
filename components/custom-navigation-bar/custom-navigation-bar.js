@@ -10,10 +10,16 @@ const CustomNavigationBar = () => {
 			name: 'go-back',
 			navigate: 'goBack',
 			icon: (
-				<Path
-					fill="currentColor"
-					d="M12.5 14.75h15c4.135 0 7.5 3.365 7.5 7.5s-3.365 7.5-7.5 7.5H20v5h7.5c6.892 0 12.5-5.608 12.5-12.5 0-6.893-5.608-12.5-12.5-12.5h-15v-7.5L0 12.25l12.5 10z"
-				/>
+				<>
+					<Path
+						fill="currentColor"
+						d="M20 40c11.027 0 20-8.973 20-20C40 8.971 31.027 0 20 0 8.971 0 0 8.971 0 20c0 11.027 8.971 20 20 20zm0-36c8.822 0 16 7.178 16 16s-7.178 16-16 16S4 28.822 4 20 11.178 4 20 4z"
+					/>
+					<Path
+						fill="currentColor"
+						d="M22.586 31.414l2.828-2.828L16.827 20l8.587-8.586-2.828-2.828L11.173 20z"
+					/>
+				</>
 			),
 			enabledIn: 'Item',
 			hideBottomBar: true,
