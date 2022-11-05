@@ -30,7 +30,8 @@
     "react-native-svg-transformer": "^1.0.0",
     "react-native-web": "0.17.7",
     "string.prototype.matchall": "^4.0.7",
-    "react-native-webview": "11.18.1"
+    "react-native-webview": "11.18.1",
+    "@react-native-community/netinfo": "8.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"
