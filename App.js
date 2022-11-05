@@ -11,6 +11,8 @@ import Settings from './utils/settings';
 import DB_LOADED from './utils/db-sqlite-loaded';
 import Themes from './utils/themes';
 import CustomNavigationBar from './components/custom-navigation-bar/custom-navigation-bar';
+import NetInfo from '@react-native-community/netinfo';
+import NoConnectionBar from './components/no-connection-bar/no-connection-bar';
 
 const horizontalAnimation = {
 	cardStyleInterpolator: ({ current, layouts }) => {
@@ -43,6 +45,7 @@ NewsData.init();
 
 export default function App() {
 	const systemTheme = useColorScheme();
+	const [isConnected, setIsConnected] = useState(true);
 	let [newsWasLoaded, setNewsWasLoaded] = useState(false);
 
 	if (Themes.theme == 'automatic') {
@@ -50,10 +53,16 @@ export default function App() {
 	}
 
 	useEffect(() => {
+		const netInfoListenerRemove = NetInfo.addEventListener((networkState) =>
+			setIsConnected(networkState.isConnected)
+		);
+
 		NewsData.newsItems
 			.getAllItems()
 			.then((news) => setNewsWasLoaded(true))
 			.catch((error) => console.log(error));
+
+		return () => netInfoListenerRemove();
 	}, []);
 
 	return newsWasLoaded ? (
@@ -72,6 +81,7 @@ export default function App() {
 				/>
 				<Stack.Screen name="Item" component={ItemScreen} options={horizontalAnimation} />
 			</Stack.Navigator>
+			{isConnected ? <></> : <NoConnectionBar />}
 			<CustomNavigationBar />
 		</NavigationContainer>
 	) : (
