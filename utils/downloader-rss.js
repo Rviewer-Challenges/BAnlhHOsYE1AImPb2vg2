@@ -3,6 +3,7 @@ import ProvidersController from '../controllers/providers-controller';
 import NewsContent from './news-content';
 import { rsstojsonConvert } from './rss-to-json';
 import Settings from './settings';
+import NetInfo from '@react-native-community/netinfo';
 
 const downloaderRSS = (db) => {
 	return new Promise((res, rej) => {
@@ -15,12 +16,18 @@ const downloaderRSS = (db) => {
 		settings
 			.get()
 			.then(({ sources }) => {
-				let getChannels;
 				channels = sources
 					.filter((source) => source.isActivated)
 					.map((source) => source.url);
-				getChannels = channels.map((channel) => fetch(channel));
-				return Promise.all(getChannels);
+				return NetInfo.fetch();
+			})
+			.then((state) => {
+				if (state.isConnected) {
+					let getChannels = channels.map((channel) => fetch(channel));
+					return Promise.all(getChannels);
+				} else {
+					return Promise.reject('No internet connection');
+				}
 			})
 			.then((response) => {
 				response = response.map((response) => response.text());
