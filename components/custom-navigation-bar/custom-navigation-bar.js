@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { DeviceEventEmitter, NativeEventEmitter } from 'react-native';
 
 const CustomNavigationBar = () => {
-	const buttons = [
+	const buttonsInit = [
 		{
 			name: 'go-back',
 			navigate: 'goBack',
@@ -83,12 +83,18 @@ const CustomNavigationBar = () => {
 					/>
 				</>
 			),
-			enabledIn: 'none',
+			enabledIn: enableRefreshBtn ? 'Home' : 'none',
 			hideBottomBar: true,
+			onPress: (button) => {
+				console.log('BOTTON PRESIONADO');
+				console.log(button);
+			},
 		},
 	];
 
+	const [buttons, setButtons] = useState(buttonsInit);
 	const [theme, changeTheme] = useState({});
+	const [enableRefreshBtn, setEnableRefreshBtn] = useState(false);
 
 	useEffect(() => {
 		const eventEmitter = new NativeEventEmitter();
@@ -97,8 +103,27 @@ const CustomNavigationBar = () => {
 			changeTheme(Themes.theme)
 		);
 
+		eventEmitter.listener = DeviceEventEmitter.addListener('SHOW_REFRESH_BUTTON', () =>
+			setEnableRefreshBtn(true)
+		);
+
+		eventEmitter.listener = DeviceEventEmitter.addListener('HIDE_REFRESH_BUTTON', () =>
+			setEnableRefreshBtn(false)
+		);
+
 		return () => {};
 	}, []);
+
+	useEffect(() => {
+		let _buttons = [...buttons];
+		_buttons = _buttons.map((button) => {
+			if (button.name == 'refresh') {
+				button.enabledIn = enableRefreshBtn ? 'Home' : 'none';
+			}
+			return button;
+		});
+		setButtons(_buttons);
+	}, [enableRefreshBtn]);
 
 	return <NavigationBar buttons={buttons} />;
 };
