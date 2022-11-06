@@ -5,10 +5,37 @@ import { useEffect, useState } from 'react';
 import { DeviceEventEmitter, NativeEventEmitter } from 'react-native';
 import Themes from '../../utils/themes';
 import { StatusBar } from 'expo-status-bar';
+import { useIsFocused } from '@react-navigation/native';
+import downloaderRSS from '../../utils/downloader-rss';
+import DB_LOADED from '../../utils/db-sqlite-loaded';
+
+let isFocused = true;
 
 const HomeScreen = ({ navigation }) => {
 	const [theme, changeTheme] = useState({});
+	const callTimer = () => {
+		clearTimeout(timer);
+		timer = setTimeout(() => {
+			if (isFocused) {
+				downloaderRSS(DB_LOADED.get())
+					.then((data) => {
+						const eventEmitter = new NativeEventEmitter();
+						if (NewsData.items[0].id == data[0].id) {
+							eventEmitter.emit('HIDE_REFRESH_BUTTON');
+						} else {
+							eventEmitter.emit('SHOW_REFRESH_BUTTON');
+						}
+						callTimer();
+					})
+					.catch((error) => console.log(error));
+			}
+		}, 10000);
+	};
 	let [news, setNews] = useState(NewsData.getAll());
+	let timer;
+
+	isFocused = useIsFocused();
+
 	useEffect(() => {
 		const willFocus = navigation.addListener('focus', () => {
 			if (NewsData.needReload) {
@@ -33,6 +60,15 @@ const HomeScreen = ({ navigation }) => {
 			}, 501)
 		);
 	}, []);
+
+	useEffect(() => {
+		if (isFocused) {
+			callTimer();
+		} else {
+			const eventEmitter = new NativeEventEmitter();
+			eventEmitter.emit('HIDE_REFRESH_BUTTON');
+		}
+	}, [isFocused]);
 
 	return (
 		<>
