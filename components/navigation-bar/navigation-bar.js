@@ -48,14 +48,14 @@ const NavigationBar = ({ buttons }) => {
 		Themes.theme == 'dark'
 			? { ...styles.buttonColors, ...stylesDark.buttonColors }
 			: styles.buttonColors;
-
+	const mainButton = buttons.find((button) => button.isMain);
 	const [state, setState] = useState({
-		activated: buttons.find((button) => button.isMain).name,
+		activated: mainButton.name,
 		bottomBarColor: 'transparent',
 		buttonsPositions: buttons.map((button) => {
 			return { name: button.name, position: -100 };
 		}),
-		lastRouteName: '',
+		lastRouteName: mainButton.navigate,
 	});
 
 	const bottomBarPosition = state.buttonsPositions.find(
@@ -135,10 +135,16 @@ const NavigationBar = ({ buttons }) => {
 
 							setState(_state);
 
-							if (button.navigate == 'goBack') {
-								navigation.goBack();
-							} else {
-								navigation.navigate(button.navigate);
+							if (button.navigate) {
+								if (button.navigate == 'goBack') {
+									navigation.goBack();
+								} else {
+									navigation.navigate(button.navigate);
+								}
+							}
+
+							if (typeof button.onPress == 'function') {
+								button.onPress(button);
 							}
 						}}
 						activated={state.activated}
