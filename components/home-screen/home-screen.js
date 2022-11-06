@@ -59,6 +59,14 @@ const HomeScreen = ({ navigation }) => {
 				changeTheme(Themes.theme);
 			}, 501)
 		);
+
+		eventEmitter.listener = DeviceEventEmitter.addListener('RELOAD_NEWS', () =>
+			NewsData.reload()
+				.then(() => {
+					setNews(NewsData.getAll());
+				})
+				.catch((error) => console.log(error))
+		);
 	}, []);
 
 	useEffect(() => {

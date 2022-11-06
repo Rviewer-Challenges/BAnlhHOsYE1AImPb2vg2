@@ -86,8 +86,7 @@ const CustomNavigationBar = () => {
 			enabledIn: enableRefreshBtn ? 'Home' : 'none',
 			hideBottomBar: true,
 			onPress: (button) => {
-				console.log('BOTTON PRESIONADO');
-				console.log(button);
+				eventEmitter.emit('RELOAD_NEWS');
 			},
 		},
 	];
@@ -95,10 +94,9 @@ const CustomNavigationBar = () => {
 	const [buttons, setButtons] = useState(buttonsInit);
 	const [theme, changeTheme] = useState({});
 	const [enableRefreshBtn, setEnableRefreshBtn] = useState(false);
+	const eventEmitter = new NativeEventEmitter();
 
 	useEffect(() => {
-		const eventEmitter = new NativeEventEmitter();
-
 		eventEmitter.listener = DeviceEventEmitter.addListener('CHANGE_THEME', () =>
 			changeTheme(Themes.theme)
 		);
