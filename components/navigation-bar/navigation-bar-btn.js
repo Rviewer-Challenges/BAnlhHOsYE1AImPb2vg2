@@ -25,6 +25,7 @@ const NavigationBarBtn = ({
 	enabled = true,
 	colors = {},
 	children,
+	style = {},
 }) => {
 	const AnimatedSvg = Animated.createAnimatedComponent(Svg);
 	const transformScaleAnim = useRef(new Animated.Value(0)).current;
@@ -100,9 +101,12 @@ const NavigationBarBtn = ({
 				style={styles.container}
 			>
 				<Animated.View
-					style={{
-						opacity: opacityBtnAnim,
-					}}
+					style={[
+						{
+							opacity: opacityBtnAnim,
+						},
+						style,
+					]}
 				>
 					<View>
 						<View style={styles.button}>
