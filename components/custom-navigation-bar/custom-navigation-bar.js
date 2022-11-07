@@ -1,10 +1,34 @@
 import NavigationBar from '../navigation-bar/navigation-bar';
 import { Path } from 'react-native-svg';
 import Themes from '../../utils/themes';
-import { useState, useEffect } from 'react';
-import { DeviceEventEmitter, NativeEventEmitter } from 'react-native';
+import { useState, useEffect, useRef } from 'react';
+import { Animated, DeviceEventEmitter, Easing, NativeEventEmitter } from 'react-native';
 
 const CustomNavigationBar = () => {
+	const transformRotateAnim = useRef(new Animated.Value(0)).current;
+	const [enableRefreshBtn, setEnableRefreshBtn] = useState(false);
+	const eventEmitter = new NativeEventEmitter();
+
+	let animatedRotateTiming;
+	const pressAnimStart = () => {
+		animatedRotateTiming = Animated.timing(transformRotateAnim, {
+			toValue: 2,
+			duration: 3600,
+			easing: Easing.elastic(),
+			useNativeDriver: true,
+		});
+
+		animatedRotateTiming.reset();
+		animatedRotateTiming.start(() => {
+			if (enableRefreshBtn) pressAnimStart();
+		});
+	};
+
+	let transformRotate = transformRotateAnim.interpolate({
+		inputRange: [0, 1],
+		outputRange: ['0deg', '-360deg'],
+	});
+
 	const buttonsInit = [
 		{
 			name: 'go-back',
@@ -87,27 +111,33 @@ const CustomNavigationBar = () => {
 			hideBottomBar: true,
 			onPress: (button) => {
 				eventEmitter.emit('RELOAD_NEWS');
+				pressAnimStart();
+			},
+			style: {
+				transform: [{ rotate: transformRotate }],
 			},
 		},
 	];
 
 	const [buttons, setButtons] = useState(buttonsInit);
 	const [theme, changeTheme] = useState({});
-	const [enableRefreshBtn, setEnableRefreshBtn] = useState(false);
-	const eventEmitter = new NativeEventEmitter();
 
 	useEffect(() => {
 		eventEmitter.listener = DeviceEventEmitter.addListener('CHANGE_THEME', () =>
 			changeTheme(Themes.theme)
 		);
 
-		eventEmitter.listener = DeviceEventEmitter.addListener('SHOW_REFRESH_BUTTON', () =>
-			setEnableRefreshBtn(true)
-		);
+		eventEmitter.listener = DeviceEventEmitter.addListener('SHOW_REFRESH_BUTTON', () => {
+			if (animatedRotateTiming) {
+				animatedRotateTiming.stop();
+				animatedRotateTiming.reset();
+			}
+			setEnableRefreshBtn(true);
+		});
 
-		eventEmitter.listener = DeviceEventEmitter.addListener('HIDE_REFRESH_BUTTON', () =>
-			setEnableRefreshBtn(false)
-		);
+		eventEmitter.listener = DeviceEventEmitter.addListener('HIDE_REFRESH_BUTTON', () => {
+			setEnableRefreshBtn(false);
+		});
 
 		return () => {};
 	}, []);
