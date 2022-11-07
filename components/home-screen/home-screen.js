@@ -64,6 +64,7 @@ const HomeScreen = ({ navigation }) => {
 			NewsData.reload()
 				.then(() => {
 					setNews(NewsData.getAll());
+					eventEmitter.emit('HIDE_REFRESH_BUTTON');
 				})
 				.catch((error) => console.log(error))
 		);
