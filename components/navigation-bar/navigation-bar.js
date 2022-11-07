@@ -153,6 +153,7 @@ const NavigationBar = ({ buttons }) => {
 								? true
 								: button.enabledIn == state.lastRouteName
 						}
+						style={button.style ?? {}}
 					>
 						{button.icon}
 					</NavigationBarBtn>
