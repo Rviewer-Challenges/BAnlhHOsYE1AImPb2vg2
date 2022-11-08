@@ -35,7 +35,7 @@ const ItemScreen = ({ route, navigation }) => {
 				height: '100%',
 				backgroundColor: Themes.theme == 'dark' ? '#2c2c2c' : '#f2f2f2',
 			}}
-			onLayout={(event) => NewsData.newsItems.updateRead(id, true)}
+			onLayout={(event) => NewsData.updateRead(id, true)}
 		>
 			<Animated.View style={{ opacity: opacity, height: '100%' }}>
 				<ItemContentWebView
@@ -53,7 +53,9 @@ const ItemScreen = ({ route, navigation }) => {
 			<StatusBar
 				style={Themes.theme == 'dark' ? 'light' : 'dark'}
 				animated={false}
-				backgroundColor={Themes.theme == 'dark' ? 'rgba(44, 44, 44, 0.5)' : 'rgba(242, 242, 242, 0.5)'}
+				backgroundColor={
+					Themes.theme == 'dark' ? 'rgba(44, 44, 44, 0.5)' : 'rgba(242, 242, 242, 0.5)'
+				}
 			/>
 		</View>
 	);

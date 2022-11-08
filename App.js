@@ -13,6 +13,7 @@ import Themes from './utils/themes';
 import CustomNavigationBar from './components/custom-navigation-bar/custom-navigation-bar';
 import NetInfo from '@react-native-community/netinfo';
 import NoConnectionBar from './components/no-connection-bar/no-connection-bar';
+import downloaderRSS from './utils/downloader-rss';
 
 const horizontalAnimation = {
 	cardStyleInterpolator: ({ current, layouts }) => {
@@ -57,8 +58,7 @@ export default function App() {
 			setIsConnected(networkState.isConnected)
 		);
 
-		NewsData.newsItems
-			.getAllItems()
+		NewsData.reload()
 			.then((news) => setNewsWasLoaded(true))
 			.catch((error) => console.log(error));
 

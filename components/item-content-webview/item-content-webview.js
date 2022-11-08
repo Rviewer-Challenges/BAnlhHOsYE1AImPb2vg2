@@ -31,7 +31,7 @@ const ItemContentWebView = ({
 					} else if (type == 'ready') {
 						onReady();
 					} else if (type == 'bookmark') {
-						NewsData.newsItems.updateBookmark(id, message);
+						NewsData.updateBookmark(id, message);
 					}
 				} catch (e) {
 					console.log(e);

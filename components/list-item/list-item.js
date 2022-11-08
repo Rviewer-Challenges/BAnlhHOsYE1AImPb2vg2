@@ -149,10 +149,10 @@ const ListItem = ({
 
 		if (position > 25) {
 			status.isBookmark = !status.isBookmark;
-			NewsData.newsItems.updateBookmark(id, status.isBookmark);
+			NewsData.updateBookmark(id, status.isBookmark);
 		} else if (position < -25) {
 			status.isRead = !status.isRead;
-			NewsData.newsItems.updateRead(id, status.isRead);
+			NewsData.updateRead(id, status.isRead);
 		}
 
 		setStatus({ isBookmark: status.isBookmark, isRead: status.isRead });
