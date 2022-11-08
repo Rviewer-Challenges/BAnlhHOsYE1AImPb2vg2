@@ -1,11 +1,9 @@
 import NewsController from '../controllers/news-controller';
 import downloaderRSS from './downloader-rss';
-import NewsData from './news-data';
 
 class NewsItems {
 	#db;
 	#newsController;
-	#timerDownloadRSS;
 
 	constructor(db) {
 		this.#db = db;
@@ -16,9 +14,7 @@ class NewsItems {
 		return new Promise((res, rej) => {
 			downloaderRSS(this.#db)
 				.then((news) => {
-					console.log('Obteniendo automaticamente');
-					NewsData.items = news;
-					res();
+					res(news);
 				})
 				.catch((error) => rej(error));
 		});
@@ -29,7 +25,6 @@ class NewsItems {
 			this.#newsController
 				.getAll()
 				.then((news) => {
-					NewsData.items = news;
 					res(news);
 				})
 				.catch((error) => rej(error));
@@ -37,12 +32,10 @@ class NewsItems {
 	}
 
 	updateBookmark(id, status) {
-		NewsData.updateBookmark(id, status);
 		this.#newsController.updateBookmark(id, status);
 	}
 
 	updateRead(id, isRead) {
-		NewsData.updateRead(id, isRead);
 		this.#newsController.updateRead(id, isRead);
 	}
 }
