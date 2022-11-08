@@ -43,11 +43,9 @@ const HomeScreen = ({ navigation }) => {
 
 	useEffect(() => {
 		const willFocus = navigation.addListener('focus', () => {
-			if (NewsData.needReload) {
-				NewsData.reload()
-					.then(() => {
-						setNews(NewsData.getAll());
-					})
+			if (NewsData.needReloadAll()) {
+				NewsData.reloadAll()
+					.then(() => setNews(NewsData.getAll()))
 					.catch((error) => console.log(error));
 			} else {
 				setNews(NewsData.getAll());

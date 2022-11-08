@@ -9,11 +9,9 @@ const BookmarksScreen = ({ navigation }) => {
 	let [news, setNews] = useState(NewsData.getBookmarks());
 	useEffect(() => {
 		const willFocus = navigation.addListener('focus', () => {
-			if (NewsData.needReload) {
-				NewsData.reload()
-					.then(() => {
-						setNews(NewsData.getBookmarks());
-					})
+			if (NewsData.needReloadBookmarks()) {
+				NewsData.reloadBookmarks()
+					.then((news) => setNews(news))
 					.catch((error) => console.log(error));
 			} else {
 				setNews(NewsData.getBookmarks());

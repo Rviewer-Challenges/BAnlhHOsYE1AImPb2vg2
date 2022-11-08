@@ -115,7 +115,7 @@ const SettingsScreen = ({ navigation }) => {
 								.then(() => providersController.updateActivate(value, isActivated))
 								.catch((error) => console.log(error));
 
-							NewsData.needReload = true;
+							NewsData.needReload();
 						}}
 					/>
 				</ScrollView>

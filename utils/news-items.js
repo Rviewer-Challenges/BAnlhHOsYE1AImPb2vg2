@@ -31,6 +31,17 @@ class NewsItems {
 		});
 	}
 
+	getBookmarksItems() {
+		return new Promise((res, rej) => {
+			this.#newsController
+				.getBookmarks()
+				.then((news) => {
+					res(news);
+				})
+				.catch((error) => rej(error));
+		});
+	}
+
 	updateBookmark(id, status) {
 		this.#newsController.updateBookmark(id, status);
 	}

@@ -58,7 +58,7 @@ export default function App() {
 			setIsConnected(networkState.isConnected)
 		);
 
-		NewsData.reload()
+		NewsData.reloadAll()
 			.then((news) => setNewsWasLoaded(true))
 			.catch((error) => console.log(error));
 
