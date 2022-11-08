@@ -64,7 +64,7 @@ const HomeScreen = ({ navigation }) => {
 		);
 
 		eventEmitter.listener = DeviceEventEmitter.addListener('RELOAD_NEWS', () =>
-			NewsData.reload()
+			NewsData.reloadAll()
 				.then(() => {
 					setNews(NewsData.getAll());
 					eventEmitter.emit('HIDE_REFRESH_BUTTON');
