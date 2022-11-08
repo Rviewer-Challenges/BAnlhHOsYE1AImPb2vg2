@@ -121,19 +121,21 @@ const NavigationBar = ({ buttons }) => {
 							}
 						}}
 						onPress={(event, left) => {
-							let _state = {
-								...state,
-								activated: button.name,
-							};
+							if (button.changeState !== false) {
+								let _state = {
+									...state,
+									activated: button.name,
+								};
 
-							if (button.hideBottomBar) {
-								_state.bottomBarColor = 'transparent';
-							} else {
-								_state.bottomBarColor = button.color;
-								_state.buttonsPositions[index].position = left;
+								if (button.hideBottomBar) {
+									_state.bottomBarColor = 'transparent';
+								} else {
+									_state.bottomBarColor = button.color;
+									_state.buttonsPositions[index].position = left;
+								}
+
+								setState(_state);
 							}
-
-							setState(_state);
 
 							if (button.navigate) {
 								if (button.navigate == 'goBack') {

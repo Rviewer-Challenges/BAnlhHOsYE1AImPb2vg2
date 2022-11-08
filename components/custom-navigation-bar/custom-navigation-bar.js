@@ -116,6 +116,7 @@ const CustomNavigationBar = () => {
 			style: {
 				transform: [{ rotate: transformRotate }],
 			},
+			changeState: false,
 		},
 	];
 
