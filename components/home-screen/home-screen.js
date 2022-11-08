@@ -20,11 +20,16 @@ const HomeScreen = ({ navigation }) => {
 				downloaderRSS(DB_LOADED.get())
 					.then((data) => {
 						const eventEmitter = new NativeEventEmitter();
-						if (NewsData.items[0].id == data[0].id) {
-							eventEmitter.emit('HIDE_REFRESH_BUTTON');
-						} else {
-							eventEmitter.emit('SHOW_REFRESH_BUTTON');
+						const newsDataItems = NewsData.getAll();
+
+						if (newsDataItems[0] != undefined && data[0] != undefined) {
+							if (newsDataItems[0].id == data[0].id) {
+								eventEmitter.emit('HIDE_REFRESH_BUTTON');
+							} else {
+								eventEmitter.emit('SHOW_REFRESH_BUTTON');
+							}
 						}
+
 						callTimer();
 					})
 					.catch((error) => console.log(error));
