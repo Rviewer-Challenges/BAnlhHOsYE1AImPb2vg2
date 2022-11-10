@@ -12,6 +12,7 @@ import DB_LOADED from '../../utils/db-sqlite-loaded';
 let isFocused = true;
 
 const HomeScreen = ({ navigation }) => {
+	const eventEmitter = new NativeEventEmitter();
 	const [theme, changeTheme] = useState({});
 	const callTimer = () => {
 		clearTimeout(timer);
@@ -19,7 +20,6 @@ const HomeScreen = ({ navigation }) => {
 			if (isFocused) {
 				downloaderRSS(DB_LOADED.get())
 					.then((data) => {
-						const eventEmitter = new NativeEventEmitter();
 						const newsDataItems = NewsData.getAll();
 
 						if (newsDataItems[0] != undefined && data[0] != undefined) {
@@ -44,8 +44,12 @@ const HomeScreen = ({ navigation }) => {
 	useEffect(() => {
 		const willFocus = navigation.addListener('focus', () => {
 			if (NewsData.needReloadAll()) {
+				eventEmitter.emit('NAV_SHOW_LOADING');
 				NewsData.reloadAll()
-					.then(() => setNews(NewsData.getAll()))
+					.then(() => {
+						setNews(NewsData.getAll());
+						eventEmitter.emit('NAV_HIDE_LOADING');
+					})
 					.catch((error) => console.log(error));
 			} else {
 				setNews(NewsData.getAll());
@@ -55,8 +59,6 @@ const HomeScreen = ({ navigation }) => {
 	}, [navigation]);
 
 	useEffect(() => {
-		const eventEmitter = new NativeEventEmitter();
-
 		eventEmitter.listener = DeviceEventEmitter.addListener('CHANGE_THEME', () =>
 			setTimeout(() => {
 				changeTheme(Themes.theme);
@@ -77,7 +79,6 @@ const HomeScreen = ({ navigation }) => {
 		if (isFocused) {
 			callTimer();
 		} else {
-			const eventEmitter = new NativeEventEmitter();
 			eventEmitter.emit('HIDE_REFRESH_BUTTON');
 		}
 	}, [isFocused]);

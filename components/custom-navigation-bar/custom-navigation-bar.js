@@ -4,24 +4,32 @@ import Themes from '../../utils/themes';
 import { useState, useEffect, useRef } from 'react';
 import { Animated, DeviceEventEmitter, Easing, NativeEventEmitter } from 'react-native';
 
+let _statusRefreshBtn = 0;
+let isRefreshBtnAnim = false;
+
 const CustomNavigationBar = () => {
 	const transformRotateAnim = useRef(new Animated.Value(0)).current;
-	const [enableRefreshBtn, setEnableRefreshBtn] = useState(false);
+	const [statusRefreshBtn, setStatusRefreshBtn] = useState(0);
 	const eventEmitter = new NativeEventEmitter();
 
 	let animatedRotateTiming;
 	const pressAnimStart = () => {
-		animatedRotateTiming = Animated.timing(transformRotateAnim, {
-			toValue: 2,
-			duration: 3600,
-			easing: Easing.elastic(),
-			useNativeDriver: true,
-		});
+		if (!isRefreshBtnAnim) {
+			isRefreshBtnAnim = true;
 
-		animatedRotateTiming.reset();
-		animatedRotateTiming.start(() => {
-			if (enableRefreshBtn) pressAnimStart();
-		});
+			animatedRotateTiming = Animated.timing(transformRotateAnim, {
+				toValue: 2,
+				duration: 3600,
+				easing: Easing.elastic(),
+				useNativeDriver: true,
+			});
+
+			animatedRotateTiming.reset();
+			animatedRotateTiming.start(() => {
+				isRefreshBtnAnim = false;
+				if (_statusRefreshBtn != 0) pressAnimStart();
+			});
+		}
 	};
 
 	let transformRotate = transformRotateAnim.interpolate({
@@ -107,11 +115,13 @@ const CustomNavigationBar = () => {
 					/>
 				</>
 			),
-			enabledIn: enableRefreshBtn ? 'Home' : 'none',
+			enabledIn: statusRefreshBtn == 0 ? 'none' : 'all',
 			hideBottomBar: true,
 			onPress: (button) => {
-				eventEmitter.emit('RELOAD_NEWS');
-				pressAnimStart();
+				if (statusRefreshBtn == 1) {
+					eventEmitter.emit('RELOAD_NEWS');
+					pressAnimStart();
+				}
 			},
 			style: {
 				transform: [{ rotate: transformRotate }],
@@ -123,21 +133,45 @@ const CustomNavigationBar = () => {
 	const [buttons, setButtons] = useState(buttonsInit);
 	const [theme, changeTheme] = useState({});
 
+	_statusRefreshBtn = statusRefreshBtn;
+
+	if (statusRefreshBtn == 2) pressAnimStart();
+
 	useEffect(() => {
 		eventEmitter.listener = DeviceEventEmitter.addListener('CHANGE_THEME', () =>
 			changeTheme(Themes.theme)
 		);
 
 		eventEmitter.listener = DeviceEventEmitter.addListener('SHOW_REFRESH_BUTTON', () => {
+			if (statusRefreshBtn == 1) {
+				if (animatedRotateTiming) {
+					animatedRotateTiming.stop();
+					animatedRotateTiming.reset();
+				}
+				setStatusRefreshBtn(1);
+			}
+		});
+
+		eventEmitter.listener = DeviceEventEmitter.addListener('HIDE_REFRESH_BUTTON', () => {
+			if (statusRefreshBtn == 1) {
+				setStatusRefreshBtn(0);
+				animatedRotateTiming.stop();
+			}
+		});
+
+		eventEmitter.listener = DeviceEventEmitter.addListener('NAV_SHOW_LOADING', () => {
 			if (animatedRotateTiming) {
 				animatedRotateTiming.stop();
 				animatedRotateTiming.reset();
 			}
-			setEnableRefreshBtn(true);
+			setStatusRefreshBtn(2);
 		});
 
-		eventEmitter.listener = DeviceEventEmitter.addListener('HIDE_REFRESH_BUTTON', () => {
-			setEnableRefreshBtn(false);
+		eventEmitter.listener = DeviceEventEmitter.addListener('NAV_HIDE_LOADING', () => {
+			if (animatedRotateTiming) {
+				animatedRotateTiming.stop();
+			}
+			setStatusRefreshBtn(0);
 		});
 
 		return () => {};
@@ -147,12 +181,12 @@ const CustomNavigationBar = () => {
 		let _buttons = [...buttons];
 		_buttons = _buttons.map((button) => {
 			if (button.name == 'refresh') {
-				button.enabledIn = enableRefreshBtn ? 'Home' : 'none';
+				button.enabledIn = statusRefreshBtn == 0 ? 'none' : 'all';
 			}
 			return button;
 		});
 		setButtons(_buttons);
-	}, [enableRefreshBtn]);
+	}, [statusRefreshBtn]);
 
 	return <NavigationBar buttons={buttons} />;
 };
