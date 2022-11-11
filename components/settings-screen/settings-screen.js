@@ -16,6 +16,7 @@ import DB_LOADED from '../../utils/db-sqlite-loaded';
 import NewsData from '../../utils/news-data';
 import Themes from '../../utils/themes';
 import { StatusBar } from 'expo-status-bar';
+import Credits from '../credits/credits';
 
 const styles = StyleSheet.create({
 	container: {
@@ -43,6 +44,10 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 		marginBottom: 10,
 	},
+	controlText: {
+		fontSize: 16,
+		textAlign: 'center',
+	},
 	controlThemeOptions: {
 		flexDirection: 'row',
 		justifyContent: 'center',
@@ -63,6 +68,9 @@ const stylesDark = StyleSheet.create({
 		color: '#ececec',
 	},
 	controlTitle: {
+		color: '#ececec',
+	},
+	controlText: {
 		color: '#ececec',
 	},
 });
@@ -86,39 +94,44 @@ const SettingsScreen = ({ navigation }) => {
 		<View style={themes.get('container')}>
 			<Text style={styles.header}>Configuración</Text>
 			{options.theme != undefined ? (
-				<ScrollView style={styles.content}>
-					<SettingsThemeOptions
-						styles={themes}
-						theme={options.theme}
-						onChange={(theme) => {
-							const eventEmitter = new NativeEventEmitter();
+				<>
+					<ScrollView style={styles.content}>
+						<SettingsThemeOptions
+							styles={themes}
+							theme={options.theme}
+							onChange={(theme) => {
+								const eventEmitter = new NativeEventEmitter();
 
-							settings.set('theme', theme);
-							if (theme == 'automatic') theme = systemTheme;
-							Themes.theme = theme;
-							setTheme(theme);
+								settings.set('theme', theme);
+								if (theme == 'automatic') theme = systemTheme;
+								Themes.theme = theme;
+								setTheme(theme);
 
-							eventEmitter.emit('CHANGE_THEME');
-						}}
-					/>
-					<SettingsSourcesOptions
-						styles={themes}
-						sources={options.sources}
-						onChange={(value, isActivated) => {
-							options.sources = options.sources.map((source) => {
-								if (source.url == value) source.isActivated = isActivated;
-								return source;
-							});
+								eventEmitter.emit('CHANGE_THEME');
+							}}
+						/>
+						<SettingsSourcesOptions
+							styles={themes}
+							sources={options.sources}
+							onChange={(value, isActivated) => {
+								options.sources = options.sources.map((source) => {
+									if (source.url == value) source.isActivated = isActivated;
+									return source;
+								});
 
-							settings
-								.set('sources', options.sources)
-								.then(() => providersController.updateActivate(value, isActivated))
-								.catch((error) => console.log(error));
+								settings
+									.set('sources', options.sources)
+									.then(() =>
+										providersController.updateActivate(value, isActivated)
+									)
+									.catch((error) => console.log(error));
 
-							NewsData.needReload();
-						}}
-					/>
-				</ScrollView>
+								NewsData.needReload();
+							}}
+						/>
+					</ScrollView>
+					<Credits styles={themes} />
+				</>
 			) : (
 				<Text>Cargando...</Text>
 			)}
