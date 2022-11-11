@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import Themes from '../../utils/themes';
 import { NativeEventEmitter } from 'react-native';
+import BookmarksNewsEmpty from './bookmarks-news-empty';
 
 const BookmarksScreen = ({ navigation }) => {
 	let [news, setNews] = useState(NewsData.getBookmarks());
@@ -28,7 +29,14 @@ const BookmarksScreen = ({ navigation }) => {
 
 	return (
 		<>
-			<CustomFlatListSwipe data={news} renderItem={({ item }) => <ListItem {...item} />} />
+			{news.length == 0 ? (
+				<BookmarksNewsEmpty />
+			) : (
+				<CustomFlatListSwipe
+					data={news}
+					renderItem={({ item }) => <ListItem {...item} />}
+				/>
+			)}
 			<StatusBar style={Themes.theme == 'dark' ? 'light' : 'dark'} animated={false} />
 		</>
 	);

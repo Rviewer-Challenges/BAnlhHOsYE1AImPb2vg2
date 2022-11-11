@@ -8,6 +8,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useIsFocused } from '@react-navigation/native';
 import downloaderRSS from '../../utils/downloader-rss';
 import DB_LOADED from '../../utils/db-sqlite-loaded';
+import HomeNewsEmpty from './home-news-empty';
 
 let isFocused = true;
 
@@ -85,11 +86,15 @@ const HomeScreen = ({ navigation }) => {
 
 	return (
 		<>
-			<CustomFlatListSwipe
-				data={news}
-				renderItem={({ item }) => <ListItem {...item} />}
-				keyExtractor={(item) => item.id}
-			/>
+			{news.length == 0 ? (
+				<HomeNewsEmpty />
+			) : (
+				<CustomFlatListSwipe
+					data={news}
+					renderItem={({ item }) => <ListItem {...item} />}
+					keyExtractor={(item) => item.id}
+				/>
+			)}
 			<StatusBar style={Themes.theme == 'dark' ? 'light' : 'dark'} animated={false} />
 		</>
 	);
