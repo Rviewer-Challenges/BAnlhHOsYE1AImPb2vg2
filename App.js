@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './components/home-screen/home-screen';
 import BookmarksScreen from './components/bookmarks-screen/bookmarks-screen';
 import SettingsScreen from './components/settings-screen/settings-screen';
-import { Text, View, useColorScheme } from 'react-native';
+import { Appearance, NativeEventEmitter } from 'react-native';
 import NewsData from './utils/news-data';
 import ItemScreen from './components/item-screen/item-screen';
 import Settings from './utils/settings';
@@ -13,7 +13,6 @@ import Themes from './utils/themes';
 import CustomNavigationBar from './components/custom-navigation-bar/custom-navigation-bar';
 import NetInfo from '@react-native-community/netinfo';
 import NoConnectionBar from './components/no-connection-bar/no-connection-bar';
-import downloaderRSS from './utils/downloader-rss';
 import Loading from './components/loading/loading';
 
 const horizontalAnimation = {
@@ -42,14 +41,15 @@ const settings = new Settings();
 DB_LOADED.init();
 NewsData.init();
 
+Themes.theme = Appearance.getColorScheme();
+
 export default function App() {
-	const systemTheme = useColorScheme();
 	const [theme, changeTheme] = useState({});
 	const [isConnected, setIsConnected] = useState(true);
 	let [newsWasLoaded, setNewsWasLoaded] = useState(false);
 
 	if (Themes.theme == 'automatic') {
-		Themes.theme = systemTheme;
+		Themes.theme = Appearance.getColorScheme();
 	}
 
 	useEffect(() => {
@@ -64,6 +64,16 @@ export default function App() {
 		settings.get().then((options) => {
 			Themes.theme = options.theme;
 			changeTheme(Themes.theme);
+		});
+
+		Appearance.addChangeListener(() => {
+			settings.get().then((options) => {
+				if (options.theme == 'automatic') {
+					const eventEmitter = new NativeEventEmitter();
+					Themes.theme = Appearance.getColorScheme();
+					eventEmitter.emit('CHANGE_THEME');
+				}
+			});
 		});
 
 		return () => netInfoListenerRemove();
