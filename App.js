@@ -14,6 +14,7 @@ import CustomNavigationBar from './components/custom-navigation-bar/custom-navig
 import NetInfo from '@react-native-community/netinfo';
 import NoConnectionBar from './components/no-connection-bar/no-connection-bar';
 import downloaderRSS from './utils/downloader-rss';
+import Loading from './components/loading/loading';
 
 const horizontalAnimation = {
 	cardStyleInterpolator: ({ current, layouts }) => {
@@ -36,9 +37,6 @@ const Stack = createStackNavigator();
 
 // LOAD SETTINGS
 const settings = new Settings();
-settings.get().then((options) => {
-	Themes.theme = options.theme;
-});
 
 //LOAD NEWS
 DB_LOADED.init();
@@ -46,6 +44,7 @@ NewsData.init();
 
 export default function App() {
 	const systemTheme = useColorScheme();
+	const [theme, changeTheme] = useState({});
 	const [isConnected, setIsConnected] = useState(true);
 	let [newsWasLoaded, setNewsWasLoaded] = useState(false);
 
@@ -62,10 +61,16 @@ export default function App() {
 			.then((news) => setNewsWasLoaded(true))
 			.catch((error) => console.log(error));
 
+		settings.get().then((options) => {
+			Themes.theme = options.theme;
+			changeTheme(Themes.theme);
+		});
+
 		return () => netInfoListenerRemove();
 	}, []);
 
-	return newsWasLoaded ? (
+	return newsWasLoaded && Themes.theme != undefined ? (
+		//return false ? (
 		<NavigationContainer>
 			<Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
 				<Stack.Screen name="Home" component={HomeScreen} />
@@ -85,8 +90,6 @@ export default function App() {
 			<CustomNavigationBar />
 		</NavigationContainer>
 	) : (
-		<View>
-			<Text>Cargando...</Text>
-		</View>
+		<Loading />
 	);
 }
