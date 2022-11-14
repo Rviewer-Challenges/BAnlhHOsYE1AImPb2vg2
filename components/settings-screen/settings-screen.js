@@ -17,6 +17,7 @@ import NewsData from '../../utils/news-data';
 import Themes from '../../utils/themes';
 import { StatusBar } from 'expo-status-bar';
 import Credits from '../credits/credits';
+import Loading from '../loading/loading';
 
 const styles = StyleSheet.create({
 	container: {
@@ -133,7 +134,7 @@ const SettingsScreen = ({ navigation }) => {
 					<Credits styles={themes} />
 				</>
 			) : (
-				<Text>Cargando...</Text>
+				<Loading />
 			)}
 			<StatusBar style="light" animated={false} />
 		</View>
