@@ -5,11 +5,12 @@ import {
 	Text,
 	useColorScheme,
 	NativeEventEmitter,
+	DeviceEventEmitter,
 } from 'react-native';
 import Constants from 'expo-constants';
 import SettingsThemeOptions from './settings-theme-options';
 import SettingsSourcesOptions from './settings-sources-options';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Settings from '../../utils/settings';
 import ProvidersController from '../../controllers/providers-controller';
 import DB_LOADED from '../../utils/db-sqlite-loaded';
@@ -80,6 +81,7 @@ let themes = new Themes();
 themes.styles(styles, stylesDark);
 
 const SettingsScreen = ({ navigation }) => {
+	const eventEmitter = new NativeEventEmitter();
 	const settings = new Settings();
 	const providersController = new ProvidersController(DB_LOADED.get());
 	const systemTheme = useColorScheme();
@@ -91,6 +93,12 @@ const SettingsScreen = ({ navigation }) => {
 		.then((options) => setOptions(options))
 		.catch((error) => console.log(error));
 
+	useEffect(() => {
+		eventEmitter.listener = DeviceEventEmitter.addListener('CHANGE_THEME', () =>
+			setTheme(Themes.theme)
+		);
+	}, []);
+
 	return (
 		<View style={themes.get('container')}>
 			<Text style={styles.header}>Configuración</Text>
@@ -101,8 +109,6 @@ const SettingsScreen = ({ navigation }) => {
 							styles={themes}
 							theme={options.theme}
 							onChange={(theme) => {
-								const eventEmitter = new NativeEventEmitter();
-
 								settings.set('theme', theme);
 								if (theme == 'automatic') theme = systemTheme;
 								Themes.theme = theme;

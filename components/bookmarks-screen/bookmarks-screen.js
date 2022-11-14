@@ -4,12 +4,20 @@ import NewsData from '../../utils/news-data';
 import { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import Themes from '../../utils/themes';
-import { NativeEventEmitter } from 'react-native';
+import { DeviceEventEmitter, NativeEventEmitter } from 'react-native';
 import BookmarksNewsEmpty from './bookmarks-news-empty';
 
 const BookmarksScreen = ({ navigation }) => {
+	const [theme, changeTheme] = useState({});
 	let [news, setNews] = useState(NewsData.getBookmarks());
 	useEffect(() => {
+		const eventEmitter = new NativeEventEmitter();
+		eventEmitter.listener = DeviceEventEmitter.addListener('CHANGE_THEME', () =>
+			setTimeout(() => {
+				changeTheme(Themes.theme);
+			}, 501)
+		);
+
 		const willFocus = navigation.addListener('focus', () => {
 			if (NewsData.needReloadBookmarks()) {
 				const eventEmitter = new NativeEventEmitter();
@@ -24,6 +32,7 @@ const BookmarksScreen = ({ navigation }) => {
 				setNews(NewsData.getBookmarks());
 			}
 		});
+
 		return willFocus;
 	}, [navigation]);
 
