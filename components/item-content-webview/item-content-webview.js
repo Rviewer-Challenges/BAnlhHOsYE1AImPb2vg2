@@ -239,6 +239,9 @@ const ItemContentWebView = ({
 						.header.no-thumbnail #bookmark-btn{
 							margin: auto 0 auto auto;
 						}
+						.header.no-thumbnail span{
+							margin-top: 0.35rem;
+						}
 						.go-to-btn{
 							position: fixed;
 							background-color: var(--go-to-btn-background);
