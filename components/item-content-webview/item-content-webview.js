@@ -290,7 +290,7 @@ const ItemContentWebView = ({
 							<span class="header-provider-name">${providerTitle}</span>
 						</header>
 						${source.replace(/<blockquote/g, '<blockquote data-theme="' + Themes.theme + '"')}
-						<a href="${link}" class="button go-to-btn">
+						<a href="${link}" id="go-to-btn" class="button go-to-btn">
 							<svg height="18" width="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18"><path d="M10 0l3.293 3.293-7 7 1.414 1.414 7-7L18 8V0z"/><path d="M16 16H2V2h7L7 0H2C.897 0 0 .897 0 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2v-5l-2-2z"/></svg>
 							<span>Visitar sitio</span>
 						</a>
@@ -301,7 +301,21 @@ const ItemContentWebView = ({
 						window.ReactNativeWebView.postMessage(JSON.stringify({ type, message }));
 
 					const links = document.querySelectorAll('a');
-			
+
+					const scroll = () => {
+						if (Math.ceil(window.innerHeight + window.pageYOffset) >= document.body.offsetHeight - 1) {
+							document.body.classList.add('scroll-bottom');
+						}else{
+							document.body.classList.remove('scroll-bottom');
+						}
+					};
+
+					const showGotoBtn = () => {
+						const gotoBtn = document.getElementById('go-to-btn');
+						const contentHeight = document.body.clientHeight - gotoBtn.offsetHeight;
+						if(contentHeight < window.innerHeight) scroll();
+					}
+					
 					function linkClick(e){
 						e.preventDefault();
 						postMessage('link', this.href);
@@ -313,17 +327,12 @@ const ItemContentWebView = ({
 
 					document.addEventListener('DOMContentLoaded', () => {
 						setTimeout(() => {
-							postMessage('ready')
+							postMessage('ready');
 						}, 100);
+						${source == '' ? '' : 'showGotoBtn();'}
 					}, false);
 
-					window.addEventListener('scroll', () => {
-						if (Math.ceil(window.innerHeight + window.pageYOffset) >= document.body.offsetHeight - 1) {
-							document.body.classList.add('scroll-bottom');
-						}else{
-							document.body.classList.remove('scroll-bottom');
-						}
-					});
+					window.addEventListener('scroll', () => scroll());
 
 					const bookmarkBtn = document.getElementById('bookmark-btn');
 					let isBookmark = ${bookmark ? 'true' : 'false'};
@@ -332,6 +341,7 @@ const ItemContentWebView = ({
 						bookmarkBtn.classList[isBookmark ? 'add' : 'remove']('selected');
 						postMessage('bookmark', isBookmark);
 					});
+
 				</script>
 				</body>
 				</html>`,
