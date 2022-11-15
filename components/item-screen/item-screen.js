@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { View, Easing, Animated } from 'react-native';
+import { View, Easing, Animated, DeviceEventEmitter, NativeEventEmitter } from 'react-native';
 import NewsData from '../../utils/news-data';
 import NewsContent from '../../utils/news-content';
 import ItemContentWebView from '../item-content-webview/item-content-webview';
@@ -10,6 +10,7 @@ const ItemScreen = ({ route, navigation }) => {
 	const { id, title, thumbnail, pubDate, providerTitle, bookmark, read, link } = route.params;
 
 	const [contentHTML, setContentHTML] = useState('');
+	const [theme, changeTheme] = useState({});
 
 	const opacity = useRef(new Animated.Value(0)).current;
 	const opacityIn = () => {
@@ -22,7 +23,13 @@ const ItemScreen = ({ route, navigation }) => {
 	};
 
 	useEffect(() => {
+		const eventEmitter = new NativeEventEmitter();
 		const newsContent = new NewsContent();
+
+		eventEmitter.listener = DeviceEventEmitter.addListener('CHANGE_THEME', () =>
+			changeTheme(Themes.theme)
+		);
+
 		newsContent
 			.getFileContent(id)
 			.then((data) => setContentHTML(data))
