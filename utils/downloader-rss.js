@@ -23,7 +23,8 @@ const downloaderRSS = (db) => {
 			})
 			.then((state) => {
 				if (state.isConnected) {
-					let getChannels = channels.map((channel) => fetch(channel));
+					const v = new Date().getTime();
+					let getChannels = channels.map((channel) => fetch(channel + '?' + v));
 					return Promise.all(getChannels);
 				} else {
 					return Promise.reject('No internet connection');
