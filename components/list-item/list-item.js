@@ -269,7 +269,6 @@ const ListItem = ({
 			>
 				<TouchableWithoutFeedback
 					onPress={() => {
-						console.log('ABRIENDO NOTICIA');
 						navigation.navigate('Item', {
 							id,
 							title,
