@@ -14,6 +14,11 @@ const ItemContentWebView = ({
 	bookmark,
 	onReady,
 }) => {
+	const bookmarkButton = `
+	<button id="bookmark-btn" class="button ${bookmark ? 'selected' : ''}">
+		<svg width="26" height="32" viewBox="0 0 26 32" xmlns="http://www.w3.org/2000/svg"><path d="M22.75 0H3.25C1.458 0 0 1.435 0 3.2V32l13-7.315L26 32V3.2C26 1.435 24.542 0 22.75 0zm0 26.485L13 21l-9.75 5.485V3.2h19.5z"/></svg>
+	</button>`;
+
 	return (
 		<WebView
 			style={{
@@ -196,7 +201,7 @@ const ItemContentWebView = ({
 							background-size: cover;
 							display: flex;
 						}
-						.cover .button{
+						#bookmark-btn{
 							-webkit-appearance: none;
 							margin: auto 0.6rem 0.6rem auto;
 							fill: var(--cover-button-fill);
@@ -205,7 +210,7 @@ const ItemContentWebView = ({
 							backdrop-filter: blur( 4px );
 							-webkit-backdrop-filter: blur( 4px );
 						}
-						.cover .button.selected{
+						#bookmark-btn.selected{
 							fill: var(--cover-button-selected-fill);
 							background: var(--cover-button-selected-background);
 						}
@@ -217,13 +222,22 @@ const ItemContentWebView = ({
 							flex-wrap: wrap;
 							justify-content: space-between;
 						}
-						.header h1{
+						.header .header-title{
 							width: 100%;
 							margin-top: 0.75rem;
 							margin-bottom: 0.3rem;
 						}
 						.header span{
 							font-size: 0.9rem;
+						}
+						.header.no-thumbnail{
+							padding-top: 2rem;
+						}
+						.header.no-thumbnail .header-title{
+							width: calc(100% - 5rem);
+						}
+						.header.no-thumbnail #bookmark-btn{
+							margin: auto 0 auto auto;
 						}
 						.go-to-btn{
 							position: fixed;
@@ -267,16 +281,13 @@ const ItemContentWebView = ({
 				</head>
 				<body>
 				<div class="container">
-					<div class="cover">
-						<button id="bookmark-btn" class="button ${bookmark ? 'selected' : ''}">
-							<svg width="26" height="32" viewBox="0 0 26 32" xmlns="http://www.w3.org/2000/svg"><path d="M22.75 0H3.25C1.458 0 0 1.435 0 3.2V32l13-7.315L26 32V3.2C26 1.435 24.542 0 22.75 0zm0 26.485L13 21l-9.75 5.485V3.2h19.5z"/></svg>
-						</button>
-					</div>
+					${thumbnail ? `<div class="cover">${bookmarkButton}</div>` : ''}
 					<div class="content">
-						<header class="header">
-							<h1>${title}</h1>
-							<span>${pubDate}</span>
-							<span>${providerTitle}</span>
+						<header class="header ${thumbnail ? '' : 'no-thumbnail'}">
+							<h1 class="header-title">${title}</h1>
+							${thumbnail ? '' : `${bookmarkButton}`}
+							<span class="header-date">${pubDate}</span>
+							<span class="header-provider-name">${providerTitle}</span>
 						</header>
 						${source.replace(/<blockquote/g, '<blockquote data-theme="' + Themes.theme + '"')}
 						<a href="${link}" class="button go-to-btn">
