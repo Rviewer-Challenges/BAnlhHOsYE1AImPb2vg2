@@ -215,7 +215,7 @@ const ItemContentWebView = ({
 							background: var(--cover-button-selected-background);
 						}
 						.content{
-							padding: 0 0.6rem 3.4rem;
+							padding: 0 0.6rem 4.3rem;
 						}
 						.header{
 							display: flex;
@@ -287,7 +287,7 @@ const ItemContentWebView = ({
 					${thumbnail ? `<div class="cover">${bookmarkButton}</div>` : ''}
 					<div class="content">
 						<header class="header ${thumbnail ? '' : 'no-thumbnail'}">
-							<h1 class="header-title">${title}</h1>
+							<h1 class="header-title">${title.replace(/\n|\r/g, '<br>')}</h1>
 							${thumbnail ? '' : `${bookmarkButton}`}
 							<span class="header-date">${pubDate}</span>
 							<span class="header-provider-name">${providerTitle}</span>
