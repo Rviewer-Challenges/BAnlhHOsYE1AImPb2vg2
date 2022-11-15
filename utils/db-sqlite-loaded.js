@@ -4,7 +4,7 @@ class DB_LOADED {
 	static #db;
 
 	static init() {
-		DB_LOADED.#db = new DB_SQLite('data106.db');
+		DB_LOADED.#db = new DB_SQLite('data-001.db');
 	}
 
 	static get() {
