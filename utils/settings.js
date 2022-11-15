@@ -18,6 +18,31 @@ class Settings {
 					isActivated: true,
 				},
 				{ name: 'Arduino', url: 'https://blog.arduino.cc/feed', isActivated: true },
+				{
+					name: 'All About Jazz - Song of the Day',
+					url: 'https://www.allaboutjazz.com/templates/rss/mp3-oftheday-rss.xml',
+					isActivated: true,
+				},
+				{
+					name: 'All About Jazz - Playlist of the Day',
+					url: 'https://www.allaboutjazz.com/templates/rss/spotify-of-the-day-rss.xml',
+					isActivated: true,
+				},
+				{
+					name: 'All About Jazz - Musician of the Day',
+					url: 'https://www.allaboutjazz.com/templates/rss/rss_motd.xml',
+					isActivated: true,
+				},
+				{
+					name: 'All About Jazz - Story of the Day',
+					url: 'https://www.allaboutjazz.com/templates/rss/rss_story_otd.xml',
+					isActivated: true,
+				},
+				{
+					name: 'All About Jazz - Articles',
+					url: 'https://www.allaboutjazz.com/rss_articles.xml',
+					isActivated: true,
+				},
 			],
 		};
 
