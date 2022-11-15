@@ -161,7 +161,13 @@ class RSStoJSON {
 		return info;
 	}
 
-	getTitle = (data) => this.removeCDATA(this.getDataFromPatron(data, 'title'));
+	getTitle = (data) => {
+		let title = this.removeCDATA(this.getDataFromPatron(data, 'title'));
+		title = title.replace(/&lt;/g, '<');
+		title = title.replace(/&gt;/g, '>');
+		title = title.replace(/<br>|<br\/>|<br \/>/g, '\n');
+		return this.removeTags(title);
+	};
 
 	getContent = (data, tag, key = 1) =>
 		this.removeCDATA(this.unescapeHTML(this.getDataFromPatron(data, tag, key)));
