@@ -115,10 +115,10 @@ const CustomNavigationBar = () => {
 					/>
 				</>
 			),
-			enabledIn: statusRefreshBtn == 0 ? 'none' : 'all',
+			enabledIn: _statusRefreshBtn == 0 ? 'none' : 'all',
 			hideBottomBar: true,
 			onPress: (button) => {
-				if (statusRefreshBtn == 1) {
+				if (_statusRefreshBtn == 1) {
 					eventEmitter.emit('RELOAD_NEWS');
 					pressAnimStart();
 				}
@@ -143,7 +143,7 @@ const CustomNavigationBar = () => {
 		);
 
 		eventEmitter.listener = DeviceEventEmitter.addListener('SHOW_REFRESH_BUTTON', () => {
-			if (statusRefreshBtn == 1) {
+			if (statusRefreshBtn == 0) {
 				if (animatedRotateTiming) {
 					animatedRotateTiming.stop();
 					animatedRotateTiming.reset();
@@ -153,9 +153,11 @@ const CustomNavigationBar = () => {
 		});
 
 		eventEmitter.listener = DeviceEventEmitter.addListener('HIDE_REFRESH_BUTTON', () => {
-			if (statusRefreshBtn == 1) {
+			if (statusRefreshBtn == 0 || statusRefreshBtn == 1) {
 				setStatusRefreshBtn(0);
-				animatedRotateTiming.stop();
+				if (animatedRotateTiming) {
+					animatedRotateTiming.stop();
+				}
 			}
 		});
 
