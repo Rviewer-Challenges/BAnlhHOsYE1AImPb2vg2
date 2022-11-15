@@ -35,7 +35,7 @@ const HomeScreen = ({ navigation }) => {
 					})
 					.catch((error) => console.log(error));
 			}
-		}, 10000);
+		}, 60000);
 	};
 	let [news, setNews] = useState(NewsData.getAll());
 	let timer;
