@@ -34,6 +34,14 @@ const ItemScreen = ({ route, navigation }) => {
 			.getFileContent(id)
 			.then((data) => setContentHTML(data))
 			.catch((error) => console.log(error));
+
+		return () => {
+			try {
+				eventEmitter.remove();
+			} catch (error) {
+				console.log(error);
+			}
+		};
 	}, []);
 
 	return (

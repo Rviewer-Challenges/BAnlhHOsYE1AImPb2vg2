@@ -33,7 +33,14 @@ const BookmarksScreen = ({ navigation }) => {
 			}
 		});
 
-		return willFocus;
+		return () => {
+			try {
+				eventEmitter.remove();
+			} catch (error) {
+				console.log(error);
+			}
+			willFocus();
+		};
 	}, [navigation]);
 
 	return (

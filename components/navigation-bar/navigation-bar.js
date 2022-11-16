@@ -94,6 +94,11 @@ const NavigationBar = ({ buttons }) => {
 
 		return () => {
 			navigation.removeListener('state');
+			try {
+				eventEmitter.remove();
+			} catch (error) {
+				console.log(error);
+			}
 		};
 	}, []);
 

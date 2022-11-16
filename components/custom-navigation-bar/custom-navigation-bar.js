@@ -176,7 +176,9 @@ const CustomNavigationBar = () => {
 			setStatusRefreshBtn(0);
 		});
 
-		return () => {};
+		return () => {
+			eventEmitter.remove();
+		};
 	}, []);
 
 	useEffect(() => {

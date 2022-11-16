@@ -10,6 +10,14 @@ const NoConnectionBar = () => {
 		eventEmitter.listener = DeviceEventEmitter.addListener('CHANGE_THEME', () =>
 			changeTheme(Themes.theme)
 		);
+
+		return () => {
+			try {
+				eventEmitter.remove();
+			} catch (error) {
+				console.log(error);
+			}
+		};
 	}, []);
 
 	return (

@@ -97,6 +97,14 @@ const SettingsScreen = ({ navigation }) => {
 		eventEmitter.listener = DeviceEventEmitter.addListener('CHANGE_THEME', () =>
 			setTheme(Themes.theme)
 		);
+
+		return () => {
+			try {
+				eventEmitter.remove();
+			} catch (error) {
+				console.log(error);
+			}
+		};
 	}, []);
 
 	return (
@@ -112,7 +120,7 @@ const SettingsScreen = ({ navigation }) => {
 								settings.set('theme', theme);
 								if (theme == 'automatic') theme = systemTheme;
 								Themes.theme = theme;
-								setTheme(theme);
+								//setTheme(theme);
 
 								eventEmitter.emit('CHANGE_THEME');
 							}}

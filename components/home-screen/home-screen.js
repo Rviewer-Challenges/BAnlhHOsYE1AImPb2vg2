@@ -74,6 +74,14 @@ const HomeScreen = ({ navigation }) => {
 				})
 				.catch((error) => console.log(error))
 		);
+
+		return () => {
+			try {
+				eventEmitter.remove();
+			} catch (error) {
+				console.log(error);
+			}
+		};
 	}, []);
 
 	useEffect(() => {
