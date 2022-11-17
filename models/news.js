@@ -1,0 +1,131 @@
+/**
+ * @name News
+ * @version 1.0.0
+ * @author sgb004
+ */
+
+class News {
+	#db;
+
+	constructor(db) {
+		this.#db = db;
+		this.#db.execute(
+			`CREATE TABLE IF NOT EXISTS news(
+				id INTEGER PRIMARY KEY NOT NULL, 
+				providerId INTEGER, 
+				guid TEXT,
+				title TEXT,
+				pubDate TEXT,
+				link TEXT,
+				author TEXT,
+				thumbnail TEXT,
+				read BOOL,
+				bookmark BOOL,
+				contentSaved BOOL
+			);`
+		);
+	}
+
+	add(data) {
+		return new Promise((res, rej) =>
+			this.#db
+				.execute(
+					'INSERT INTO news (providerId, guid, title, pubDate, link, author, thumbnail, read, bookmark, contentSaved) values (?, ?, ?, ?, ?, ?, ?, 0, 0, 0)',
+					[
+						data.providerId,
+						data.guid,
+						data.title,
+						data.pubDate,
+						data.link,
+						data.author,
+						data.thumbnail,
+					]
+				)
+				.then((result) => res(result.insertId))
+				.catch((error) => rej(error))
+		);
+	}
+
+	get() {
+		return new Promise((res, rej) => {
+			this.#db
+				.select(
+					`
+					SELECT 
+						news.*,
+						providers.title AS providerTitle,
+						providers.image AS providerImage
+					FROM
+						news
+					INNER JOIN providers
+						ON providers.id = news.providerId
+					WHERE
+						providers.activated = 1
+					`
+				)
+				.then((rows) => res(rows))
+				.catch((error) => rej(error));
+		});
+	}
+
+	getBookmarks() {
+		return new Promise((res, rej) => {
+			this.#db
+				.select(
+					`
+					SELECT 
+						news.*,
+						providers.title AS providerTitle,
+						providers.image AS providerImage
+					FROM
+						news
+					INNER JOIN providers
+						ON providers.id = news.providerId
+					WHERE
+						providers.activated = 1
+						AND bookmark = 1
+					`
+				)
+				.then((rows) => res(rows))
+				.catch((error) => rej(error));
+		});
+	}
+
+	findByGuid(guid) {
+		return new Promise((res, rej) => {
+			this.#db
+				.select('SELECT id FROM news WHERE guid=?', [guid])
+				.then((rows) => res(rows.length == 0 ? undefined : rows[0].id))
+				.catch((error) => rej(error));
+		});
+	}
+
+	setBookmark(id, status) {
+		return new Promise((res, rej) => {
+			this.#db
+				.execute('UPDATE news SET bookmark = ? WHERE id = ?', [status, id])
+				.then((result) => res(result))
+				.catch((error) => rej(error));
+		});
+	}
+
+	setRead(id, status) {
+		return new Promise((res, rej) => {
+			this.#db
+				.execute('UPDATE news SET read = ? WHERE id = ?', [status, id])
+				.then((result) => res(result))
+				.catch((error) => rej(error));
+		});
+	}
+
+	setContentSaved(id, status) {
+		return new Promise((res, rej) => {
+			this.#db
+				.execute('UPDATE news SET contentSaved = ? WHERE id = ?', [status, id])
+				.then((result) => res(result))
+				.catch((error) => rej(error));
+		});
+	}
+}
+
+export default News;
